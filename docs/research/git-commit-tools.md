@@ -14,15 +14,15 @@
 
 ### Git Hooks 管理：husky vs lefthook
 
-| 维度 | husky | lefthook |
-|------|-------|----------|
-| 语言 | JavaScript (Node.js) | Go (编译为二进制) |
-| 启动速度 | 较慢（需启动 Node 进程） | 快（原生二进制，毫秒级） |
-| 配置方式 | `.husky/` 目录下多个 shell 脚本 | 单个 `lefthook.yml` |
-| 并行执行 | 有限 | 内置支持 |
-| 社区规模 | 极大（32k+ stars） | 中等（5k+ stars，快速增长） |
-| monorepo 支持 | 需额外配置 | 原生支持 |
-| 学习成本 | 低 | 低 |
+| 维度          | husky                           | lefthook                    |
+| ------------- | ------------------------------- | --------------------------- |
+| 语言          | JavaScript (Node.js)            | Go (编译为二进制)           |
+| 启动速度      | 较慢（需启动 Node 进程）        | 快（原生二进制，毫秒级）    |
+| 配置方式      | `.husky/` 目录下多个 shell 脚本 | 单个 `lefthook.yml`         |
+| 并行执行      | 有限                            | 内置支持                    |
+| 社区规模      | 极大（32k+ stars）              | 中等（5k+ stars，快速增长） |
+| monorepo 支持 | 需额外配置                      | 原生支持                    |
+| 学习成本      | 低                              | 低                          |
 
 ### 提交信息检查：commitlint
 
@@ -73,6 +73,6 @@ commit-msg:
 
 ```js
 export default {
-  extends: ['@commitlint/config-conventional'],
+  extends: ["@commitlint/config-conventional"],
 };
 ```

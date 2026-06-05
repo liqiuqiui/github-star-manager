@@ -5,6 +5,7 @@
 ## 需求
 
 用户可自行选择插件 UI 形态：
+
 - **Popup 弹窗**：点击插件图标弹出管理面板
 - **侧边栏面板**：在浏览器侧边栏显示管理面板
 
@@ -15,12 +16,14 @@
 Chrome 114+ 引入 `chrome.sidePanel` API（仅 Manifest V3）。
 
 **核心 API**:
+
 - `chrome.action.setPopup({ popup: "..." })` — 动态设置/移除 popup
 - `chrome.sidePanel.setOptions({ path, enabled })` — 配置侧边栏
 - `chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })` — 点击图标打开侧边栏
 - `chrome.sidePanel.open({ windowId })` — 程序化打开侧边栏
 
 **切换机制**:
+
 ```typescript
 // 切换到 Popup 模式
 chrome.action.setPopup({ popup: "popup.html" });
@@ -37,6 +40,7 @@ chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 Firefox 使用 `browser.sidebarAction` API。
 
 **核心 API**:
+
 - `browser.sidebarAction.open()` / `.close()` — 打开/关闭侧边栏
 - `browser.sidebarAction.setPanel({ panel: "..." })` — 切换侧边栏内容
 - `browser.action.openPopup()` (Firefox 109+) — 程序化打开 popup
@@ -49,13 +53,13 @@ Safari 16.4+ 支持 `browser.sidebarAction` API，与 Firefox 类似。
 
 ## 跨浏览器兼容性
 
-| 特性 | Chrome | Firefox | Safari |
-|------|--------|---------|--------|
-| Popup API | `chrome.action` | `browser.action` | `browser.action` |
-| 侧边栏 API | `chrome.sidePanel` | `browser.sidebarAction` | `browser.sidebarAction` |
-| 侧边栏最低版本 | 114+ | 48+ | 16.4+ |
-| API 命名空间 | `sidePanel`（非标准） | `sidebarAction`（标准） | `sidebarAction`（标准） |
-| 动态切换 | ✅ 支持 | 有限支持 | 有限支持 |
+| 特性           | Chrome                | Firefox                 | Safari                  |
+| -------------- | --------------------- | ----------------------- | ----------------------- |
+| Popup API      | `chrome.action`       | `browser.action`        | `browser.action`        |
+| 侧边栏 API     | `chrome.sidePanel`    | `browser.sidebarAction` | `browser.sidebarAction` |
+| 侧边栏最低版本 | 114+                  | 48+                     | 16.4+                   |
+| API 命名空间   | `sidePanel`（非标准） | `sidebarAction`（标准） | `sidebarAction`（标准） |
+| 动态切换       | ✅ 支持               | 有限支持                | 有限支持                |
 
 **关键差异**: Chrome 使用专有的 `sidePanel` API，Firefox/Safari 使用标准的 `sidebarAction` API。
 
@@ -64,11 +68,11 @@ Safari 16.4+ 支持 `browser.sidebarAction` API，与 Firefox 类似。
 ```typescript
 // 保存用户偏好
 await chrome.storage.sync.set({
-  uiMode: 'sidebar', // 'popup' | 'sidebar'
+  uiMode: "sidebar", // 'popup' | 'sidebar'
 });
 
 // 读取用户偏好
-const { uiMode } = await chrome.storage.sync.get('uiMode');
+const { uiMode } = await chrome.storage.sync.get("uiMode");
 ```
 
 ## 推荐实现方案：浏览器适配层
@@ -87,40 +91,42 @@ src/
 ```
 
 **适配器接口**:
+
 ```typescript
 interface UIAdapter {
-  setMode(mode: 'popup' | 'sidebar'): Promise<void>;
+  setMode(mode: "popup" | "sidebar"): Promise<void>;
   openSidebar(): Promise<void>;
   closeSidebar(): Promise<void>;
-  getMode(): Promise<'popup' | 'sidebar'>;
+  getMode(): Promise<"popup" | "sidebar">;
 }
 
 function getAdapter(): UIAdapter {
-  if (typeof chrome !== 'undefined' && chrome.sidePanel) {
+  if (typeof chrome !== "undefined" && chrome.sidePanel) {
     return new ChromeAdapter();
-  } else if (typeof browser !== 'undefined' && browser.sidebarAction) {
+  } else if (typeof browser !== "undefined" && browser.sidebarAction) {
     return new FirefoxAdapter();
   }
-  throw new Error('Unsupported browser');
+  throw new Error("Unsupported browser");
 }
 ```
 
 **Chrome 适配器实现**:
+
 ```typescript
 class ChromeAdapter implements UIAdapter {
-  async setMode(mode: 'popup' | 'sidebar') {
+  async setMode(mode: "popup" | "sidebar") {
     await chrome.storage.sync.set({ uiMode: mode });
 
-    if (mode === 'sidebar') {
-      await chrome.action.setPopup({ popup: '' });
+    if (mode === "sidebar") {
+      await chrome.action.setPopup({ popup: "" });
       await chrome.sidePanel.setPanelBehavior({
-        openPanelOnActionClick: true
+        openPanelOnActionClick: true,
       });
     } else {
       await chrome.sidePanel.setPanelBehavior({
-        openPanelOnActionClick: false
+        openPanelOnActionClick: false,
       });
-      await chrome.action.setPopup({ popup: '/popup.html' });
+      await chrome.action.setPopup({ popup: "/popup.html" });
     }
   }
   // ...

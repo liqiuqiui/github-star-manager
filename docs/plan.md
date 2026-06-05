@@ -8,19 +8,19 @@ GitHub Star 管理浏览器插件，支持 Chrome / Firefox，所有操作通过
 
 ## 技术选型
 
-| 维度 | 选择 | 理由 |
-|------|------|------|
-| 框架 | WXT | 基于 Vite，支持 Chrome + Firefox，HMR 体验最佳，活跃维护 |
-| 前端 | React 19 + TypeScript | 最新 React，生态成熟 |
-| 状态管理 | Zustand | 轻量级状态管理，适合插件场景 |
-| 样式 | UnoCSS | WXT 有配套 unocss 包 |
-| Lint | Oxlint | Rust 实现，比 ESLint 快 50~100 倍，React/TS 规则内置 |
-| 格式化 | Oxfmt | 比 Prettier 快 30 倍，内置 import 排序和 Tailwind 排序 |
-| Git Hooks | lefthook | Go 原生二进制，单 YAML 配置，并行执行 |
-| 提交规范 | commitlint + Conventional Commits | 检查提交信息格式，支持自动化 changelog |
-| 暂存 lint | lint-staged | 只对暂存文件运行 lint，避免全量扫描 |
-| 存储 | chrome.storage.sync + IndexedDB | sync 存用户配置，IndexedDB 缓存 Star 数据 |
-| API | GitHub GraphQL（主要）+ REST（补充） | GraphQL 一次请求获取更多字段，减少调用次数 |
+| 维度      | 选择                                 | 理由                                                     |
+| --------- | ------------------------------------ | -------------------------------------------------------- |
+| 框架      | WXT                                  | 基于 Vite，支持 Chrome + Firefox，HMR 体验最佳，活跃维护 |
+| 前端      | React 19 + TypeScript                | 最新 React，生态成熟                                     |
+| 状态管理  | Zustand                              | 轻量级状态管理，适合插件场景                             |
+| 样式      | UnoCSS                               | WXT 有配套 unocss 包                                     |
+| Lint      | Oxlint                               | Rust 实现，比 ESLint 快 50~100 倍，React/TS 规则内置     |
+| 格式化    | Oxfmt                                | 比 Prettier 快 30 倍，内置 import 排序和 Tailwind 排序   |
+| Git Hooks | lefthook                             | Go 原生二进制，单 YAML 配置，并行执行                    |
+| 提交规范  | commitlint + Conventional Commits    | 检查提交信息格式，支持自动化 changelog                   |
+| 暂存 lint | lint-staged                          | 只对暂存文件运行 lint，避免全量扫描                      |
+| 存储      | chrome.storage.sync + IndexedDB      | sync 存用户配置，IndexedDB 缓存 Star 数据                |
+| API       | GitHub GraphQL（主要）+ REST（补充） | GraphQL 一次请求获取更多字段，减少调用次数               |
 
 ## 项目结构
 
@@ -79,11 +79,13 @@ github-star-manager/
 ### 功能 2: Star 列表管理
 
 **数据获取**:
+
 - GraphQL `User.starredRepositories` 分页拉取全部 Star（cursor 分页，每页 100）
 - 缓存到 IndexedDB，记录 `lastSyncTime`
 - 增量同步：按 `starredAt` 时间戳拉取新增
 
 **展示**:
+
 - 列表视图：卡片形式展示仓库（名称、描述、语言、Star 数、Star 时间）
 - 支持按语言、Star 时间、最近更新排序
 - 支持按关键词搜索（本地全文匹配名称/描述/topics）
@@ -91,12 +93,14 @@ github-star-manager/
 ### 功能 3: 分类系统（双模式）
 
 **模式 A — GitHub Star Lists**:
+
 - GraphQL 查询 `User.starLists` 获取用户的所有 Lists
 - `addStarListEntry` / `removeStarListEntry` 管理列表内容
 - `createStarList` / `deleteStarList` 管理列表本身
 - 受限于 32 个列表上限、列表默认公开
 
 **模式 B — 本地标签**:
+
 - 存储在 IndexedDB，键为仓库 `full_name`
 - 支持多标签（一个仓库可属于多个标签）
 - 无数量限制，支持私有

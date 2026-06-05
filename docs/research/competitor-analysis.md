@@ -4,23 +4,23 @@
 
 ## Chrome 插件竞品
 
-| 插件 | 评分 | 标签 | 笔记 | 搜索 | 同步 | 状态 |
-|------|------|------|------|------|------|------|
-| DevHub - Stars with Memory | 4.5 | ✅ | ✅ | ✅ | 未知 | 不确定 |
-| Star History | 4.9 | ❌ | ❌ | ❌ | - | 活跃（非管理工具） |
-| GitHub Star Notes | 5.0 | ❌ | ✅ | 未知 | ✅ | 不确定 |
-| Quick Repo Organizer | 0.0 | 未知 | 未知 | 未知 | 未知 | 不确定 |
-| GitHub Starred Lists | 0.0 | ❌ | ❌ | ❌ | ✅ | 不确定 |
-| GitHub Favorites | 0.0 | ❌ | ❌ | ❌ | ❌ | 不确定 |
+| 插件                       | 评分 | 标签 | 笔记 | 搜索 | 同步 | 状态               |
+| -------------------------- | ---- | ---- | ---- | ---- | ---- | ------------------ |
+| DevHub - Stars with Memory | 4.5  | ✅   | ✅   | ✅   | 未知 | 不确定             |
+| Star History               | 4.9  | ❌   | ❌   | ❌   | -    | 活跃（非管理工具） |
+| GitHub Star Notes          | 5.0  | ❌   | ✅   | 未知 | ✅   | 不确定             |
+| Quick Repo Organizer       | 0.0  | 未知 | 未知 | 未知 | 未知 | 不确定             |
+| GitHub Starred Lists       | 0.0  | ❌   | ❌   | ❌   | ✅   | 不确定             |
+| GitHub Favorites           | 0.0  | ❌   | ❌   | ❌   | ❌   | 不确定             |
 
 ## 开源项目（均已归档/停滞）
 
-| 项目 | GitHub Stars | 标签 | 笔记 | 搜索 | 同步 | 状态 |
-|------|-------------|------|------|------|------|------|
-| Remu | 518 | ✅ | ✅ | ✅ | Gist | 🔴 已归档 2022 |
-| The Fucking Github | 587 | ✅ | ❌ | ✅ | Google | 🔴 已归档 2020 |
-| StarCabinet | 407 | ✅ | ❌ | ✅ | ❌ | 🔴 停滞 2018 |
-| GitHub Stars Manager | 233 | ✅ | ❌ | ❌ | Chrome | 🔴 停滞 2018 |
+| 项目                 | GitHub Stars | 标签 | 笔记 | 搜索 | 同步   | 状态           |
+| -------------------- | ------------ | ---- | ---- | ---- | ------ | -------------- |
+| Remu                 | 518          | ✅   | ✅   | ✅   | Gist   | 🔴 已归档 2022 |
+| The Fucking Github   | 587          | ✅   | ❌   | ✅   | Google | 🔴 已归档 2020 |
+| StarCabinet          | 407          | ✅   | ❌   | ✅   | ❌     | 🔴 停滞 2018   |
+| GitHub Stars Manager | 233          | ✅   | ❌   | ❌   | Chrome | 🔴 停滞 2018   |
 
 ### Remu（最全面的已归档项目）
 
@@ -36,12 +36,12 @@
 
 ## Web 应用
 
-| 工具 | GitHub Stars | 核心功能 | 状态 |
-|------|-------------|---------|------|
-| Astral | 3.5k | 标签分类、搜索、README 查看 | 🟡 维护缓慢（PHP 过时） |
-| Star History | - | Star 增长趋势图表 | ✅ 活跃 |
-| Best of JS | 3.1k | JS 生态项目发现排行 | ✅ 活跃 |
-| Daily Stars Explorer | 371 | Star 历史和活动分析 | ✅ 活跃 |
+| 工具                 | GitHub Stars | 核心功能                    | 状态                    |
+| -------------------- | ------------ | --------------------------- | ----------------------- |
+| Astral               | 3.5k         | 标签分类、搜索、README 查看 | 🟡 维护缓慢（PHP 过时） |
+| Star History         | -            | Star 增长趋势图表           | ✅ 活跃                 |
+| Best of JS           | 3.1k         | JS 生态项目发现排行         | ✅ 活跃                 |
+| Daily Stars Explorer | 371          | Star 历史和活动分析         | ✅ 活跃                 |
 
 ### Astral
 
@@ -63,16 +63,16 @@
 
 ## 竞品对比总结
 
-| 工具/插件 | 类型 | 评分 | 标签 | 笔记 | 搜索 | 同步 | 状态 |
-|-----------|------|------|------|------|------|------|------|
-| DevHub | Chrome 扩展 | 4.5 | 有 | 有 | 有 | 未知 | 不确定 |
-| Star History | Chrome 扩展 | 4.9 | 无 | 无 | 无 | - | 活跃 |
-| GitHub Star Notes | Chrome 扩展 | 5.0 | 无 | 有 | 未知 | 有 | 不确定 |
-| Remu (开源) | Chrome 扩展 | - | 有 | 有 | 有 | 有(Gist) | 已归档 |
-| the-fucking-github (开源) | Chrome 扩展 | - | 有 | 无 | 有 | 有 | 已归档 |
-| stargazed (开源) | CLI | - | 按语言 | 无 | 无 | - | 维护中 |
-| daily-stars-explorer (开源) | Web 应用 | - | 无 | 无 | 有 | - | 活跃 |
-| GitHub Lists (官方) | 网页功能 | - | 列表 | 无 | 无 | 官方 | 公开预览 |
+| 工具/插件                   | 类型        | 评分 | 标签   | 笔记 | 搜索 | 同步     | 状态     |
+| --------------------------- | ----------- | ---- | ------ | ---- | ---- | -------- | -------- |
+| DevHub                      | Chrome 扩展 | 4.5  | 有     | 有   | 有   | 未知     | 不确定   |
+| Star History                | Chrome 扩展 | 4.9  | 无     | 无   | 无   | -        | 活跃     |
+| GitHub Star Notes           | Chrome 扩展 | 5.0  | 无     | 有   | 未知 | 有       | 不确定   |
+| Remu (开源)                 | Chrome 扩展 | -    | 有     | 有   | 有   | 有(Gist) | 已归档   |
+| the-fucking-github (开源)   | Chrome 扩展 | -    | 有     | 无   | 有   | 有       | 已归档   |
+| stargazed (开源)            | CLI         | -    | 按语言 | 无   | 无   | -        | 维护中   |
+| daily-stars-explorer (开源) | Web 应用    | -    | 无     | 无   | 有   | -        | 活跃     |
+| GitHub Lists (官方)         | 网页功能    | -    | 列表   | 无   | 无   | 官方     | 公开预览 |
 
 ## 市场机会
 
