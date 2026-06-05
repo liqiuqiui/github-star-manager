@@ -10,7 +10,8 @@ const DEFAULT_SETTINGS: Settings = {
 
 export async function getSettings(): Promise<Settings> {
   const result = await browser.storage.sync.get(STORAGE_KEY);
-  return { ...DEFAULT_SETTINGS, ...result[STORAGE_KEY] };
+  const stored = result[STORAGE_KEY] as Partial<Settings> | undefined;
+  return { ...DEFAULT_SETTINGS, ...stored };
 }
 
 export async function saveSettings(settings: Partial<Settings>): Promise<void> {

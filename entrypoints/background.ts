@@ -2,26 +2,27 @@ export default defineBackground(() => {
   console.log("GitHub Star Manager background started");
 
   // Handle UI mode switching for Chrome
-  if (typeof chrome !== "undefined" && chrome.sidePanel) {
-    chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+  const chromeApi = (globalThis as unknown as { chrome?: typeof chrome }).chrome;
+  if (chromeApi?.sidePanel) {
+    chromeApi.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
 
-    chrome.storage.sync.get("github-star-manager-settings", (result) => {
-      const settings = result["github-star-manager-settings"];
+    chromeApi.storage.sync.get("github-star-manager-settings", (result: Record<string, unknown>) => {
+      const settings = result["github-star-manager-settings"] as { uiMode?: string } | undefined;
       if (settings?.uiMode === "sidebar") {
-        chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
-        chrome.action.setPopup({ popup: "" });
+        chromeApi.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+        chromeApi.action.setPopup({ popup: "" });
       }
     });
 
-    chrome.storage.onChanged.addListener((changes) => {
+    chromeApi.storage.onChanged.addListener((changes: Record<string, chrome.storage.StorageChange>) => {
       if (changes["github-star-manager-settings"]) {
-        const newSettings = changes["github-star-manager-settings"].newValue;
+        const newSettings = changes["github-star-manager-settings"].newValue as { uiMode?: string } | undefined;
         if (newSettings?.uiMode === "sidebar") {
-          chrome.action.setPopup({ popup: "" });
-          chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+          chromeApi.action.setPopup({ popup: "" });
+          chromeApi.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
         } else {
-          chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
-          chrome.action.setPopup({ popup: "/popup.html" });
+          chromeApi.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+          chromeApi.action.setPopup({ popup: "/popup.html" });
         }
       }
     });

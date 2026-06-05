@@ -2,6 +2,33 @@ import type { Repo, StarList, GitHubUser } from "../types";
 
 const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
 
+interface GraphQLResponse<T> {
+  data: T;
+  errors?: Array<{ message: string }>;
+}
+
+interface StarredRepoNode {
+  nameWithOwner: string;
+  name: string;
+  description: string;
+  url: string;
+  homepageUrl: string;
+  stargazerCount: number;
+  primaryLanguage: { name: string; color: string } | null;
+  repositoryTopics: { nodes: Array<{ topic: { name: string } }> };
+  isArchived: boolean;
+  isDisabled: boolean;
+  pushedAt: string;
+  starredAt: string;
+}
+
+interface StarListResponse {
+  id: string;
+  name: string;
+  description: string;
+  repositories: { nodes: Array<{ nameWithOwner: string }> };
+}
+
 async function graphqlRequest<T>(
   token: string,
   query: string,
@@ -20,12 +47,12 @@ async function graphqlRequest<T>(
     throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
   }
 
-  const data = await response.json();
-  if (data.errors) {
-    throw new Error(data.errors.map((e: { message: string }) => e.message).join(", "));
+  const result: GraphQLResponse<T> = await response.json();
+  if (result.errors) {
+    throw new Error(result.errors.map((e) => e.message).join(", "));
   }
 
-  return data.data;
+  return result.data;
 }
 
 export async function verifyToken(token: string): Promise<GitHubUser> {
@@ -48,27 +75,14 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
   let hasNextPage = true;
 
   while (hasNextPage) {
-    const data = await graphqlRequest<{
+    const data: {
       viewer: {
         starredRepositories: {
           pageInfo: { hasNextPage: boolean; endCursor: string };
-          nodes: Array<{
-            nameWithOwner: string;
-            name: string;
-            description: string;
-            url: string;
-            homepageUrl: string;
-            stargazerCount: number;
-            primaryLanguage: { name: string; color: string } | null;
-            repositoryTopics: { nodes: Array<{ topic: { name: string } }> };
-            isArchived: boolean;
-            isDisabled: boolean;
-            pushedAt: string;
-            starredAt: string;
-          }>;
+          nodes: StarredRepoNode[];
         };
       };
-    }>(
+    } = await graphqlRequest(
       token,
       `query ($after: String) {
         viewer {
@@ -119,7 +133,7 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
         homepageUrl: node.homepageUrl || "",
         stargazerCount: node.stargazerCount,
         primaryLanguage: node.primaryLanguage,
-        topics: node.repositoryTopics.nodes.map((t) => t.topic.name),
+        topics: node.repositoryTopics.nodes.map((t: { topic: { name: string } }) => t.topic.name),
         isArchived: node.isArchived,
         isDisabled: node.isDisabled,
         pushedAt: node.pushedAt,
@@ -135,20 +149,13 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
 }
 
 export async function fetchStarLists(token: string): Promise<StarList[]> {
-  const data = await graphqlRequest<{
+  const data: {
     viewer: {
       starLists: {
-        nodes: Array<{
-          id: string;
-          name: string;
-          description: string;
-          repositories: {
-            nodes: Array<{ nameWithOwner: string }>;
-          };
-        }>;
+        nodes: StarListResponse[];
       };
     };
-  }>(
+  } = await graphqlRequest(
     token,
     `query {
       viewer {
