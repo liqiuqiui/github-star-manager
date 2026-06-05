@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "uno.css";
 import { App } from "../popup/App";
 import "../popup/style.css";
 
