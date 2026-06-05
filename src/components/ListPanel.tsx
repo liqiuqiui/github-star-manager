@@ -20,7 +20,7 @@ export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelPr
           variant={selectedList === null ? "default" : "secondary"}
           size="sm"
           onClick={() => onListSelect(null)}
-          className="rounded-full text-xs h-7"
+          className="rounded-md text-xs h-7"
         >
           全部
         </Button>
@@ -30,7 +30,7 @@ export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelPr
             variant={selectedList === list.name ? "default" : "secondary"}
             size="sm"
             onClick={() => onListSelect(selectedList === list.name ? null : list.name)}
-            className="rounded-full text-xs h-7"
+            className="rounded-md text-xs h-7"
           >
             {list.name}
             <Badge variant="secondary" className="ml-1 opacity-60">

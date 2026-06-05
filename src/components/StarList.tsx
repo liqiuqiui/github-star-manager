@@ -17,13 +17,10 @@ interface StarListProps {
 type SortField = "starredAt" | "stargazerCount" | "pushedAt" | "name";
 type SortDirection = "asc" | "desc";
 
-const selectClass =
-  "border border-gray-200 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-600 focus:outline-none focus:border-gray-400";
-
 export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarListProps) {
   const [sortField, setSortField] = useState<SortField>("starredAt");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const [langFilter, setLangFilter] = useState<string>("");
+  const [langFilter, setLangFilter] = useState<string>("all");
 
   const languages = useMemo(() => {
     const langSet = new Set<string>();
@@ -38,7 +35,7 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
   const filteredAndSorted = useMemo(() => {
     let result = repos;
 
-    if (langFilter) {
+    if (langFilter && langFilter !== "all") {
       result = result.filter((r) => r.primaryLanguage?.name === langFilter);
     }
 
@@ -70,48 +67,55 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-3 text-xs">
-        <select
-          value={sortField}
-          onChange={(e) => setSortField(e.target.value as SortField)}
-          className={selectClass}
-        >
-          <option value="starredAt">Star 时间</option>
-          <option value="stargazerCount">Star 数</option>
-          <option value="pushedAt">最近更新</option>
-          <option value="name">名称</option>
-        </select>
-        <button
+      <div className="flex items-center gap-2 mb-3">
+        <Select value={sortField} onValueChange={(value) => setSortField(value as SortField)}>
+          <SelectTrigger className="w-[120px] h-8 text-xs">
+            <SelectValue placeholder="排序方式" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="starredAt">Star 时间</SelectItem>
+            <SelectItem value="stargazerCount">Star 数</SelectItem>
+            <SelectItem value="pushedAt">最近更新</SelectItem>
+            <SelectItem value="name">名称</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          variant="outline"
+          size="icon"
           onClick={() => setSortDirection((d) => (d === "asc" ? "desc" : "asc"))}
-          className="border border-gray-200 rounded-md px-2.5 py-1.5 bg-white text-gray-500 hover:bg-gray-50 transition-colors"
+          className="h-8 w-8"
         >
           {sortDirection === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
-        </button>
-        <select
-          value={langFilter}
-          onChange={(e) => setLangFilter(e.target.value)}
-          className={selectClass}
-        >
-          <option value="">所有语言</option>
-          {languages.map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
-            </option>
-          ))}
-        </select>
-        <span className="text-gray-400 ml-auto">{filteredAndSorted.length} 个仓库</span>
+        </Button>
+        <Select value={langFilter} onValueChange={setLangFilter}>
+          <SelectTrigger className="w-[140px] h-8 text-xs">
+            <SelectValue placeholder="所有语言" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">所有语言</SelectItem>
+            {languages.map((lang) => (
+              <SelectItem key={lang} value={lang}>
+                {lang}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span className="text-muted-foreground ml-auto text-xs">
+          {filteredAndSorted.length} 个仓库
+        </span>
       </div>
 
       <div className="flex items-center gap-2 mb-2">
-        <label className="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer select-none">
-          <input
-            type="checkbox"
+        <div className="flex items-center gap-1.5">
+          <Checkbox
+            id="select-all"
             checked={allSelected}
-            onChange={(e) => onSelectAll(e.target.checked)}
-            className="rounded"
+            onCheckedChange={(checked) => onSelectAll(checked as boolean)}
           />
-          全选
-        </label>
+          <Label htmlFor="select-all" className="text-xs text-muted-foreground cursor-pointer">
+            全选
+          </Label>
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -126,7 +130,7 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
       </div>
 
       {filteredAndSorted.length === 0 && (
-        <div className="text-center text-gray-400 py-8 text-sm">没有找到匹配的仓库</div>
+        <div className="text-center text-muted-foreground py-8 text-sm">没有找到匹配的仓库</div>
       )}
     </div>
   );

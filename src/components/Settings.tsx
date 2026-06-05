@@ -72,9 +72,9 @@ export function Settings({ onBack }: SettingsProps) {
         <h2 className="text-sm font-semibold text-foreground">设置</h2>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-5">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">
         <div>
-          <Label className="mb-1.5">GitHub Personal Access Token</Label>
+          <Label className="mb-2 block">GitHub Personal Access Token</Label>
           <div className="flex gap-2">
             <Input
               type="password"
@@ -101,7 +101,7 @@ export function Settings({ onBack }: SettingsProps) {
         </div>
 
         <div>
-          <Label className="mb-1.5">UI 模式</Label>
+          <Label className="mb-2 block">UI 模式</Label>
           <div className="flex gap-2">
             {(["popup", "sidebar"] as UIMode[]).map((mode) => (
               <Button
@@ -117,7 +117,7 @@ export function Settings({ onBack }: SettingsProps) {
         </div>
 
         <div>
-          <Label className="mb-1.5">主题</Label>
+          <Label className="mb-2 block">主题</Label>
           <div className="flex gap-2">
             <Button
               variant={theme === "light" ? "default" : "outline"}

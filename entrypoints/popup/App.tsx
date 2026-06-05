@@ -109,7 +109,7 @@ export function App() {
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
         <h1 className="text-sm font-semibold text-foreground">GitHub Star Manager</h1>
         <div className="flex items-center gap-2">
-          <Button size="sm" onClick={handleSync} disabled={!token || isSyncing}>
+          <Button size="sm" onClick={handleSync} disabled={!token || isSyncing} className="h-8">
             {isSyncing ? "同步中..." : "同步"}
           </Button>
           <Button

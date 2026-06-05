@@ -37,7 +37,7 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
           variant={selectedTag === null ? "default" : "secondary"}
           size="sm"
           onClick={() => onTagSelect(null)}
-          className="rounded-full text-xs h-7"
+          className="rounded-md text-xs h-7"
         >
           全部
         </Button>
@@ -47,7 +47,7 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
             variant={selectedTag === name ? "default" : "secondary"}
             size="sm"
             onClick={() => onTagSelect(selectedTag === name ? null : name)}
-            className="rounded-full text-xs h-7"
+            className="rounded-md text-xs h-7"
           >
             {name}
             <Badge variant="secondary" className="ml-1 opacity-60">
@@ -60,7 +60,7 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
             variant="ghost"
             size="sm"
             onClick={() => setShowAll(!showAll)}
-            className="rounded-full text-xs h-7 text-muted-foreground"
+            className="rounded-md text-xs h-7 text-muted-foreground"
           >
             {showAll ? "收起" : `+${tagCounts.length - 20}`}
           </Button>
