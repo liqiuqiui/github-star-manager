@@ -5,12 +5,14 @@ import { useSettingsStore } from "../../src/stores/settingsStore";
 import { SearchBar } from "../../src/components/SearchBar";
 import { StarList } from "../../src/components/StarList";
 import { TagPanel } from "../../src/components/TagPanel";
+import { ListPanel } from "../../src/components/ListPanel";
 import { BatchActions } from "../../src/components/BatchActions";
 import { Settings } from "../../src/components/Settings";
 
 export function App() {
   const {
     repos,
+    starLists,
     repoTags,
     isLoading,
     isSyncing,
@@ -23,6 +25,7 @@ export function App() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedList, setSelectedList] = useState<string | null>(null);
   const [selectedRepos, setSelectedRepos] = useState<Set<string>>(new Set());
   const [showSettings, setShowSettings] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -50,8 +53,15 @@ export function App() {
       result = result.filter((r) => repoTags[r.nameWithOwner]?.includes(selectedTag));
     }
 
+    if (selectedList) {
+      const list = starLists.find((l) => l.name === selectedList);
+      if (list) {
+        result = result.filter((r) => list.repositories.includes(r.nameWithOwner));
+      }
+    }
+
     return result;
-  }, [repos, searchQuery, selectedTag, repoTags]);
+  }, [repos, searchQuery, selectedTag, selectedList, repoTags, starLists]);
 
   const handleSelect = useCallback((name: string, selected: boolean) => {
     setSelectedRepos((prev) => {
@@ -94,7 +104,7 @@ export function App() {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-[680px] min-w-[520px] w-full">
+    <div className="flex flex-col h-full min-h-[680px] min-w-[520px] w-full overflow-hidden max-h-100vh">
       <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white">
         <h1 className="text-sm font-semibold text-gray-800">GitHub Star Manager</h1>
         <div className="flex items-center gap-2">
@@ -149,6 +159,11 @@ export function App() {
                 selectedTag={selectedTag}
                 onTagSelect={setSelectedTag}
               />
+              <ListPanel
+                starLists={starLists}
+                selectedList={selectedList}
+                onListSelect={setSelectedList}
+              />
             </div>
             <BatchActions
               selectedCount={selectedRepos.size}
@@ -156,7 +171,7 @@ export function App() {
               onClearSelection={() => setSelectedRepos(new Set())}
               isProcessing={isProcessing}
             />
-            <div className="max-h-[320px] overflow-y-auto">
+            <div className="flex-1 overflow-y-auto">
               <StarList
                 repos={filteredRepos}
                 selectedRepos={selectedRepos}

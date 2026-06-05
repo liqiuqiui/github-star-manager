@@ -30,12 +30,13 @@ export const useStarStore = create<StarState>((set, get) => ({
   loadFromCache: async () => {
     set({ isLoading: true, error: null });
     try {
-      const [repos, repoTags, lastSyncTime] = await Promise.all([
+      const [repos, repoTags, lastSyncTime, starLists] = await Promise.all([
         cache.getRepos(),
         cache.getRepoTags(),
         cache.getLastSyncTime(),
+        cache.getStarLists(),
       ]);
-      set({ repos, repoTags, lastSyncTime, isLoading: false });
+      set({ repos, repoTags, lastSyncTime, starLists, isLoading: false });
     } catch (err) {
       set({ error: (err as Error).message, isLoading: false });
     }
@@ -45,7 +46,7 @@ export const useStarStore = create<StarState>((set, get) => ({
     set({ isSyncing: true, error: null });
     try {
       const [repos, starLists] = await Promise.all([fetchAllStars(token), fetchStarLists(token)]);
-      await cache.saveRepos(repos);
+      await Promise.all([cache.saveRepos(repos), cache.saveStarLists(starLists)]);
       const lastSyncTime = Date.now();
       set({ repos, starLists, lastSyncTime, isSyncing: false });
     } catch (err) {

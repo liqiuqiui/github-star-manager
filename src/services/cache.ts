@@ -1,4 +1,4 @@
-import type { Repo, RepoTagMap } from "../types";
+import type { Repo, RepoTagMap, StarList } from "../types";
 
 const DB_NAME = "github-star-manager";
 const DB_VERSION = 1;
@@ -116,4 +116,16 @@ export async function removeRepoTag(repoFullName: string, tagName: string): Prom
 export async function clearTags(): Promise<void> {
   const store = await getStore(STORES.tags, "readwrite");
   store.clear();
+}
+
+// StarLists cache (stored in meta store)
+export async function saveStarLists(lists: StarList[]): Promise<void> {
+  const store = await getStore(STORES.meta, "readwrite");
+  store.put({ key: "starLists", value: lists });
+}
+
+export async function getStarLists(): Promise<StarList[]> {
+  const store = await getStore(STORES.meta);
+  const result = await requestToPromise(store.get("starLists"));
+  return result?.value ?? [];
 }

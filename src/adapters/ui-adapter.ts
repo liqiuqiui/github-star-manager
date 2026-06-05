@@ -44,7 +44,8 @@ class FirefoxAdapter implements UIAdapter {
 
   async openSidebar(): Promise<void> {
     // sidebarAction is Firefox-specific
-    const api = (browser as unknown as { sidebarAction?: { open: () => Promise<void> } }).sidebarAction;
+    const api = (browser as unknown as { sidebarAction?: { open: () => Promise<void> } })
+      .sidebarAction;
     if (api) {
       await api.open();
     }
