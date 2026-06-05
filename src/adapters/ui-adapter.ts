@@ -10,9 +10,9 @@ class ChromeAdapter implements UIAdapter {
   async setMode(mode: UIMode): Promise<void> {
     if (mode === "sidebar") {
       await browser.action.setPopup({ popup: "" });
-      await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+      await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
     } else {
-      await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+      await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
       await browser.action.setPopup({ popup: "/popup.html" });
     }
   }
@@ -26,7 +26,7 @@ class ChromeAdapter implements UIAdapter {
   async openSidebar(): Promise<void> {
     const win = await browser.windows.getCurrent();
     if (win.id) {
-      await chrome.sidePanel.open({ windowId: win.id });
+      await browser.sidePanel.open({ windowId: win.id });
     }
   }
 }

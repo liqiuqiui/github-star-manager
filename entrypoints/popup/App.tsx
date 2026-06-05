@@ -94,7 +94,7 @@ export function App() {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-[480px] min-w-[320px] w-full">
+    <div className="flex flex-col h-full min-h-[680px] min-w-[520px] w-full">
       <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white">
         <h1 className="text-sm font-semibold text-gray-800">GitHub Star Manager</h1>
         <div className="flex items-center gap-2">

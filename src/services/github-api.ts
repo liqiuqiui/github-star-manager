@@ -7,26 +7,28 @@ interface GraphQLResponse<T> {
   errors?: Array<{ message: string }>;
 }
 
-interface StarredRepoNode {
-  nameWithOwner: string;
-  name: string;
-  description: string;
-  url: string;
-  homepageUrl: string;
-  stargazerCount: number;
-  primaryLanguage: { name: string; color: string } | null;
-  repositoryTopics: { nodes: Array<{ topic: { name: string } }> };
-  isArchived: boolean;
-  isDisabled: boolean;
-  pushedAt: string;
+interface StarredRepoEdge {
   starredAt: string;
+  node: {
+    nameWithOwner: string;
+    name: string;
+    description: string;
+    url: string;
+    homepageUrl: string;
+    stargazerCount: number;
+    primaryLanguage: { name: string; color: string } | null;
+    repositoryTopics: { nodes: Array<{ topic: { name: string } }> };
+    isArchived: boolean;
+    isDisabled: boolean;
+    pushedAt: string;
+  };
 }
 
 interface StarListResponse {
   id: string;
   name: string;
   description: string;
-  repositories: { nodes: Array<{ nameWithOwner: string }> };
+  items: { nodes: Array<{ nameWithOwner: string }> };
 }
 
 async function graphqlRequest<T>(
@@ -79,7 +81,7 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
       viewer: {
         starredRepositories: {
           pageInfo: { hasNextPage: boolean; endCursor: string };
-          nodes: StarredRepoNode[];
+          edges: StarredRepoEdge[];
         };
       };
     } = await graphqlRequest(
@@ -91,28 +93,30 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
               hasNextPage
               endCursor
             }
-            nodes {
-              nameWithOwner
-              name
-              description
-              url
-              homepageUrl
-              stargazerCount
-              primaryLanguage {
+            edges {
+              starredAt
+              node {
+                nameWithOwner
                 name
-                color
-              }
-              repositoryTopics(first: 10) {
-                nodes {
-                  topic {
-                    name
+                description
+                url
+                homepageUrl
+                stargazerCount
+                primaryLanguage {
+                  name
+                  color
+                }
+                repositoryTopics(first: 10) {
+                  nodes {
+                    topic {
+                      name
+                    }
                   }
                 }
+                isArchived
+                isDisabled
+                pushedAt
               }
-              isArchived
-              isDisabled
-              pushedAt
-              starredAt
             }
           }
         }
@@ -122,7 +126,8 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
 
     const starredRepos = data.viewer.starredRepositories;
 
-    for (const node of starredRepos.nodes) {
+    for (const edge of starredRepos.edges) {
+      const node = edge.node;
       const [owner, name] = node.nameWithOwner.split("/");
       repos.push({
         nameWithOwner: node.nameWithOwner,
@@ -137,7 +142,7 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
         isArchived: node.isArchived,
         isDisabled: node.isDisabled,
         pushedAt: node.pushedAt,
-        starredAt: node.starredAt,
+        starredAt: edge.starredAt,
       });
     }
 
@@ -151,7 +156,7 @@ export async function fetchAllStars(token: string): Promise<Repo[]> {
 export async function fetchStarLists(token: string): Promise<StarList[]> {
   const data: {
     viewer: {
-      starLists: {
+      lists: {
         nodes: StarListResponse[];
       };
     };
@@ -159,14 +164,16 @@ export async function fetchStarLists(token: string): Promise<StarList[]> {
     token,
     `query {
       viewer {
-        starLists(first: 32) {
+        lists(first: 32) {
           nodes {
             id
             name
             description
-            repositories(first: 100) {
+            items(first: 100) {
               nodes {
-                nameWithOwner
+                ... on Repository {
+                  nameWithOwner
+                }
               }
             }
           }
@@ -175,11 +182,11 @@ export async function fetchStarLists(token: string): Promise<StarList[]> {
     }`,
   );
 
-  return data.viewer.starLists.nodes.map((list) => ({
+  return data.viewer.lists.nodes.map((list) => ({
     id: list.id,
     name: list.name,
     description: list.description || "",
-    repositories: list.repositories.nodes.map((r) => r.nameWithOwner),
+    repositories: list.items.nodes.map((r) => r.nameWithOwner),
   }));
 }
 

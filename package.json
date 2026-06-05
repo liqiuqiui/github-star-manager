@@ -1,7 +1,7 @@
 {
   "name": "github-star-manager",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "GitHub Star 管理浏览器插件",
   "type": "module",
   "scripts": {
