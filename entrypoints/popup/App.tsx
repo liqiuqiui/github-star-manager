@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Settings as SettingsIcon } from "lucide-react";
+import { Button } from "../../src/components/ui/button";
 import { useStarStore } from "../../src/stores/starStore";
 import { useSettingsStore } from "../../src/stores/settingsStore";
 import { SearchBar } from "../../src/components/SearchBar";
@@ -105,50 +106,39 @@ export function App() {
 
   return (
     <div className="flex flex-col h-full min-h-[680px] min-w-[520px] w-full overflow-hidden max-h-100vh">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white">
-        <h1 className="text-sm font-semibold text-gray-800">GitHub Star Manager</h1>
+      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+        <h1 className="text-sm font-semibold text-foreground">GitHub Star Manager</h1>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleSync}
-            disabled={!token || isSyncing}
-            className="text-xs px-3 py-1.5 bg-gray-800 text-white rounded-md hover:bg-gray-700 disabled:opacity-40 transition-colors"
-          >
+          <Button size="sm" onClick={handleSync} disabled={!token || isSyncing}>
             {isSyncing ? "同步中..." : "同步"}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setShowSettings(true)}
-            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+            className="h-8 w-8"
           >
             <SettingsIcon size={16} />
-          </button>
+          </Button>
         </div>
       </header>
 
       <div className="flex-1 overflow-hidden flex flex-col p-4">
         {!token ? (
           <div className="flex-1 flex flex-col items-center justify-center">
-            <p className="text-sm text-gray-400 mb-4">请先配置 GitHub Token</p>
-            <button
-              onClick={() => setShowSettings(true)}
-              className="text-sm px-5 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
-            >
-              前往设置
-            </button>
+            <p className="text-sm text-muted-foreground mb-4">请先配置 GitHub Token</p>
+            <Button onClick={() => setShowSettings(true)}>前往设置</Button>
           </div>
         ) : isLoading ? (
-          <div className="flex-1 flex items-center justify-center text-sm text-gray-400">
+          <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
             加载中...
           </div>
         ) : repos.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center">
-            <p className="text-sm text-gray-400 mb-4">暂无 Star 数据</p>
-            <button
-              onClick={handleSync}
-              disabled={isSyncing}
-              className="text-sm px-5 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 disabled:opacity-40 transition-colors"
-            >
+            <p className="text-sm text-muted-foreground mb-4">暂无 Star 数据</p>
+            <Button onClick={handleSync} disabled={isSyncing}>
               {isSyncing ? "同步中..." : "从 GitHub 同步"}
-            </button>
+            </Button>
           </div>
         ) : (
           <>
@@ -180,7 +170,7 @@ export function App() {
               />
             </div>
             {lastSyncTime && (
-              <div className="text-xs text-gray-400 text-center mt-2">
+              <div className="text-xs text-muted-foreground text-center mt-2">
                 上次同步：{new Date(lastSyncTime).toLocaleString()}
               </div>
             )}

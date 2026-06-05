@@ -1,4 +1,5 @@
-import clsx from "clsx";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import type { StarList } from "../types";
 
 interface ListPanelProps {
@@ -15,31 +16,27 @@ export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelPr
   return (
     <div className="mb-3">
       <div className="flex flex-wrap gap-1.5">
-        <button
+        <Button
+          variant={selectedList === null ? "default" : "secondary"}
+          size="sm"
           onClick={() => onListSelect(null)}
-          className={clsx(
-            "text-xs px-2 py-1 rounded transition-colors",
-            selectedList === null
-              ? "bg-gray-800 text-white"
-              : "bg-gray-100 text-gray-500 hover:bg-gray-200",
-          )}
+          className="rounded-full text-xs h-7"
         >
           全部
-        </button>
+        </Button>
         {starLists.map((list) => (
-          <button
+          <Button
             key={list.id}
+            variant={selectedList === list.name ? "default" : "secondary"}
+            size="sm"
             onClick={() => onListSelect(selectedList === list.name ? null : list.name)}
-            className={clsx(
-              "text-xs px-2 py-1 rounded transition-colors",
-              selectedList === list.name
-                ? "bg-gray-800 text-white"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200",
-            )}
+            className="rounded-full text-xs h-7"
           >
             {list.name}
-            <span className="ml-1 opacity-60">{list.repositories.length}</span>
-          </button>
+            <Badge variant="secondary" className="ml-1 opacity-60">
+              {list.repositories.length}
+            </Badge>
+          </Button>
         ))}
       </div>
     </div>

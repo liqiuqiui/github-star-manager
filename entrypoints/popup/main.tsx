@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "uno.css";
+import "../../src/styles/globals.css";
 import { App } from "./App";
 import "./style.css";
 

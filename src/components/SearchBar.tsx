@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
 import { Search, X } from "lucide-react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -25,21 +27,23 @@ export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: S
 
   return (
     <div className="relative flex items-center">
-      <Search size={15} className="absolute left-3 text-gray-300" />
-      <input
+      <Search size={15} className="absolute left-3 text-muted-foreground" />
+      <Input
         type="text"
         value={query}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-700 placeholder-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
+        className="pl-9 pr-8"
       />
       {query && (
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={handleClear}
-          className="absolute right-3 text-gray-300 hover:text-gray-500 transition-colors"
+          className="absolute right-1 h-8 w-8"
         >
           <X size={14} />
-        </button>
+        </Button>
       )}
     </div>
   );

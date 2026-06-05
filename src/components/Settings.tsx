@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
-import clsx from "clsx";
+import { ArrowLeft, Sun, Moon, Monitor } from "lucide-react";
+import { cn } from "../lib/utils";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import type { UIMode } from "../types";
 import { useSettingsStore } from "../stores/settingsStore";
+import { useTheme } from "../hooks/useTheme";
 import { validateToken } from "../services/auth";
 import type { GitHubUser } from "../types";
 
@@ -12,6 +16,7 @@ interface SettingsProps {
 
 export function Settings({ onBack }: SettingsProps) {
   const { token, uiMode, setToken, setUIMode, loadSettings } = useSettingsStore();
+  const { theme, setTheme } = useTheme();
   const [tokenInput, setTokenInput] = useState(token);
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -60,77 +65,94 @@ export function Settings({ onBack }: SettingsProps) {
 
   return (
     <div className="flex flex-col h-full min-h-[480px] min-w-[320px] w-full">
-      <header className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 bg-white">
-        <button
-          onClick={onBack}
-          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
-        >
+      <header className="flex items-center gap-2 px-4 py-3 border-b border-border bg-card">
+        <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
           <ArrowLeft size={16} />
-        </button>
-        <h2 className="text-sm font-semibold text-gray-800">设置</h2>
+        </Button>
+        <h2 className="text-sm font-semibold text-foreground">设置</h2>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1.5">
-            GitHub Personal Access Token
-          </label>
+          <Label className="mb-1.5">GitHub Personal Access Token</Label>
           <div className="flex gap-2">
-            <input
+            <Input
               type="password"
               value={tokenInput}
               onChange={(e) => setTokenInput(e.target.value)}
               placeholder="ghp_xxxxxxxxxxxx"
-              className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-xs bg-white text-gray-800 placeholder-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
+              className="flex-1"
             />
-            <button
-              onClick={handleSaveToken}
-              disabled={isValidating}
-              className="px-4 py-2 bg-gray-800 text-white text-xs rounded-md hover:bg-gray-700 disabled:opacity-40 transition-colors"
-            >
+            <Button onClick={handleSaveToken} disabled={isValidating}>
               {isValidating ? "验证中..." : "保存"}
-            </button>
+            </Button>
           </div>
-          {error && <p className="text-xs text-red-500 mt-1.5">{error}</p>}
+          {error && <p className="text-xs text-destructive mt-1.5">{error}</p>}
           {saved && <p className="text-xs text-green-600 mt-1.5">保存成功</p>}
           {user && (
-            <div className="flex items-center gap-2 mt-2 p-2.5 bg-gray-50 border border-gray-100 rounded-lg">
+            <div className="flex items-center gap-2 mt-2 p-2.5 bg-muted border border-border rounded-lg">
               <img src={user.avatarUrl} alt={user.login} className="w-7 h-7 rounded-full" />
               <div>
-                <span className="text-xs text-gray-700 font-medium">{user.name}</span>
-                <span className="text-xs text-gray-400 ml-1">@{user.login}</span>
+                <span className="text-xs text-foreground font-medium">{user.name}</span>
+                <span className="text-xs text-muted-foreground ml-1">@{user.login}</span>
               </div>
             </div>
           )}
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1.5">UI 模式</label>
+          <Label className="mb-1.5">UI 模式</Label>
           <div className="flex gap-2">
             {(["popup", "sidebar"] as UIMode[]).map((mode) => (
-              <button
+              <Button
                 key={mode}
+                variant={uiMode === mode ? "default" : "outline"}
                 onClick={() => handleUIModeChange(mode)}
-                className={clsx(
-                  "flex-1 text-xs py-2.5 rounded-lg border transition-colors",
-                  uiMode === mode
-                    ? "border-gray-800 bg-gray-800 text-white"
-                    : "border-gray-200 text-gray-600 hover:bg-gray-50",
-                )}
+                className="flex-1"
               >
                 {mode === "popup" ? "Popup 弹窗" : "侧边栏"}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
-        <div className="text-xs text-gray-400 space-y-1">
+        <div>
+          <Label className="mb-1.5">主题</Label>
+          <div className="flex gap-2">
+            <Button
+              variant={theme === "light" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setTheme("light")}
+              className="h-10 w-10"
+            >
+              <Sun size={16} />
+            </Button>
+            <Button
+              variant={theme === "dark" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setTheme("dark")}
+              className="h-10 w-10"
+            >
+              <Moon size={16} />
+            </Button>
+            <Button
+              variant={theme === "system" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setTheme("system")}
+              className="h-10 w-10"
+            >
+              <Monitor size={16} />
+            </Button>
+          </div>
+        </div>
+
+        <div className="text-xs text-muted-foreground space-y-1">
           <p>Token 权限：read:user, repo</p>
           <a
             href="https://github.com/settings/tokens/new?scopes=read:user,repo&description=GitHubStarManager"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-foreground hover:text-foreground/80 transition-colors"
           >
             生成 Token →
           </a>

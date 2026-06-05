@@ -1,5 +1,7 @@
 import { Star } from "lucide-react";
-import clsx from "clsx";
+import { cn } from "../lib/utils";
+import { Checkbox } from "./ui/checkbox";
+import { Badge } from "./ui/badge";
 import type { Repo } from "../types";
 
 interface StarCardProps {
@@ -11,17 +13,18 @@ interface StarCardProps {
 export function StarCard({ repo, selected, onSelect }: StarCardProps) {
   return (
     <div
-      className={clsx(
+      className={cn(
         "border rounded-lg px-3 py-2.5 transition-colors",
-        selected ? "border-gray-800 bg-gray-50" : "border-gray-150 hover:border-gray-300 bg-white",
+        selected
+          ? "border-primary bg-muted"
+          : "border-border hover:border-muted-foreground/50 bg-card",
       )}
     >
       <div className="flex items-start gap-2.5">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={selected}
-          onChange={(e) => onSelect(repo.nameWithOwner, e.target.checked)}
-          className="mt-1 cursor-pointer rounded"
+          onCheckedChange={(checked) => onSelect(repo.nameWithOwner, checked as boolean)}
+          className="mt-1"
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -29,22 +32,22 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
               href={repo.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-gray-800 hover:text-gray-600 truncate"
+              className="text-sm font-medium text-foreground hover:text-muted-foreground truncate"
             >
               {repo.nameWithOwner}
             </a>
             {repo.isArchived && (
-              <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
                 Archived
-              </span>
+              </Badge>
             )}
           </div>
           {repo.description && (
-            <p className="text-xs text-gray-400 mt-0.5 line-clamp-2 leading-relaxed">
+            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
               {repo.description}
             </p>
           )}
-          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-gray-400">
+          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted-foreground">
             {repo.primaryLanguage && (
               <span className="flex items-center gap-1">
                 <span
@@ -55,7 +58,7 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
               </span>
             )}
             <span className="flex items-center gap-0.5">
-              <Star size={11} className="text-gray-300" fill="currentColor" />
+              <Star size={11} className="text-muted-foreground/50" fill="currentColor" />
               {repo.stargazerCount.toLocaleString()}
             </span>
             <span>{new Date(repo.starredAt).toLocaleDateString()}</span>
@@ -63,15 +66,14 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
           {repo.topics.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1.5">
               {repo.topics.slice(0, 5).map((topic) => (
-                <span
-                  key={topic}
-                  className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded"
-                >
+                <Badge key={topic} variant="secondary" className="text-[10px] px-1.5 py-0.5">
                   {topic}
-                </span>
+                </Badge>
               ))}
               {repo.topics.length > 5 && (
-                <span className="text-[10px] text-gray-300">+{repo.topics.length - 5}</span>
+                <span className="text-[10px] text-muted-foreground/50">
+                  +{repo.topics.length - 5}
+                </span>
               )}
             </div>
           )}

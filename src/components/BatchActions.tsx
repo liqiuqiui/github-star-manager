@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 
 interface BatchActionsProps {
   selectedCount: number;
@@ -18,48 +20,58 @@ export function BatchActions({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg mb-3">
-      <span className="text-xs text-gray-600">
-        已选 <span className="font-medium text-gray-800">{selectedCount}</span> 个仓库
+    <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg mb-3">
+      <span className="text-xs text-muted-foreground">
+        已选{" "}
+        <Badge variant="secondary" className="ml-1">
+          {selectedCount}
+        </Badge>{" "}
+        个仓库
       </span>
       <div className="flex-1" />
       {!confirmUnstar ? (
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setConfirmUnstar(true)}
           disabled={isProcessing}
-          className="text-xs px-3 py-1.5 bg-white text-red-600 border border-red-200 rounded-md hover:bg-red-50 disabled:opacity-40 transition-colors"
+          className="text-destructive border-destructive/20 hover:bg-destructive/10"
         >
           批量取消 Star
-        </button>
+        </Button>
       ) : (
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-gray-500">确认取消？</span>
-          <button
+          <span className="text-xs text-muted-foreground">确认取消？</span>
+          <Button
+            variant="destructive"
+            size="sm"
             onClick={() => {
               onBatchUnstar();
               setConfirmUnstar(false);
             }}
             disabled={isProcessing}
-            className="text-xs px-2.5 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-40 transition-colors"
           >
             {isProcessing ? "处理中..." : "确认"}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setConfirmUnstar(false)}
             disabled={isProcessing}
-            className="text-xs px-2.5 py-1.5 bg-white text-gray-600 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
           >
             取消
-          </button>
+          </Button>
         </div>
       )}
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={onClearSelection}
         disabled={isProcessing}
-        className="text-xs px-2 py-1.5 text-gray-400 hover:text-gray-600 transition-colors"
+        className="text-muted-foreground"
       >
         清除
-      </button>
+      </Button>
     </div>
   );
 }

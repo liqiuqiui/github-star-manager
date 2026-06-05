@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import clsx from "clsx";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import type { RepoTagMap } from "../types";
 
 interface TagPanelProps {
@@ -32,39 +33,37 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
   return (
     <div className="mb-3">
       <div className="flex flex-wrap gap-1.5">
-        <button
+        <Button
+          variant={selectedTag === null ? "default" : "secondary"}
+          size="sm"
           onClick={() => onTagSelect(null)}
-          className={clsx(
-            "text-xs px-2 py-1 rounded-full transition-colors",
-            selectedTag === null
-              ? "bg-gray-800 text-white"
-              : "bg-gray-100 text-gray-500 hover:bg-gray-200",
-          )}
+          className="rounded-full text-xs h-7"
         >
           全部
-        </button>
+        </Button>
         {displayTags.map(({ name, count }) => (
-          <button
+          <Button
             key={name}
+            variant={selectedTag === name ? "default" : "secondary"}
+            size="sm"
             onClick={() => onTagSelect(selectedTag === name ? null : name)}
-            className={clsx(
-              "text-xs px-2 py-1 rounded-full transition-colors",
-              selectedTag === name
-                ? "bg-gray-800 text-white"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200",
-            )}
+            className="rounded-full text-xs h-7"
           >
             {name}
-            <span className="ml-1 opacity-60">{count}</span>
-          </button>
+            <Badge variant="secondary" className="ml-1 opacity-60">
+              {count}
+            </Badge>
+          </Button>
         ))}
         {tagCounts.length > 20 && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setShowAll(!showAll)}
-            className="text-xs px-2 py-1 rounded-full text-gray-400 hover:bg-gray-100"
+            className="rounded-full text-xs h-7 text-muted-foreground"
           >
             {showAll ? "收起" : `+${tagCounts.length - 20}`}
-          </button>
+          </Button>
         )}
       </div>
     </div>
