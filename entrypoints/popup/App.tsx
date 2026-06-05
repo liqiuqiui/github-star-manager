@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Settings as SettingsIcon, ArrowUp, ArrowDown } from "lucide-react";
+import { isEmpty, uniq, sortBy, orderBy } from "lodash-es";
+import { Settings as SettingsIcon, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { Button } from "../../src/components/ui/button";
 import { Checkbox } from "../../src/components/ui/checkbox";
 import { Label } from "../../src/components/ui/label";
@@ -51,14 +52,22 @@ export function App() {
     });
   }, [loadSettings, loadFromCache]);
 
-  const languages = useMemo(() => {
-    const langSet = new Set<string>();
-    for (const repo of repos) {
-      if (repo.primaryLanguage) {
-        langSet.add(repo.primaryLanguage.name);
+  // 监听来自 background 的同步触发消息
+  useEffect(() => {
+    const handleMessage = (message: { type: string }) => {
+      if (message.type === "TRIGGER_SYNC" && token && !isSyncing) {
+        syncFromGitHub(token);
       }
-    }
-    return Array.from(langSet).sort();
+    };
+
+    browser.runtime.onMessage.addListener(handleMessage);
+    return () => {
+      browser.runtime.onMessage.removeListener(handleMessage);
+    };
+  }, [token, isSyncing, syncFromGitHub]);
+
+  const languages = useMemo(() => {
+    return sortBy(uniq(repos.filter((r) => r.primaryLanguage).map((r) => r.primaryLanguage!.name)));
   }, [repos]);
 
   const filteredAndSortedRepos = useMemo(() => {
@@ -89,24 +98,24 @@ export function App() {
       result = result.filter((r) => r.primaryLanguage?.name === langFilter);
     }
 
-    result = [...result].sort((a, b) => {
-      let cmp = 0;
-      switch (sortField) {
-        case "starredAt":
-          cmp = new Date(a.starredAt).getTime() - new Date(b.starredAt).getTime();
-          break;
-        case "stargazerCount":
-          cmp = a.stargazerCount - b.stargazerCount;
-          break;
-        case "pushedAt":
-          cmp = new Date(a.pushedAt).getTime() - new Date(b.pushedAt).getTime();
-          break;
-        case "name":
-          cmp = a.nameWithOwner.localeCompare(b.nameWithOwner);
-          break;
-      }
-      return sortDirection === "desc" ? -cmp : cmp;
-    });
+    result = orderBy(
+      result,
+      [
+        (repo) => {
+          switch (sortField) {
+            case "starredAt":
+              return new Date(repo.starredAt).getTime();
+            case "pushedAt":
+              return new Date(repo.pushedAt).getTime();
+            case "name":
+              return repo.nameWithOwner.toLowerCase();
+            default:
+              return repo[sortField];
+          }
+        },
+      ],
+      [sortDirection],
+    );
 
     return result;
   }, [
@@ -134,7 +143,7 @@ export function App() {
   }, []);
 
   const allSelected =
-    filteredAndSortedRepos.length > 0 &&
+    !isEmpty(filteredAndSortedRepos) &&
     filteredAndSortedRepos.every((r) => selectedRepos.has(r.nameWithOwner));
 
   const handleSelectAll = useCallback(
@@ -166,7 +175,14 @@ export function App() {
   }
 
   return (
-    <div className="app flex flex-col h-full w-full overflow-hidden">
+    <div className="app flex flex-col h-full w-full overflow-hidden relative">
+      {/* 全局同步遮罩 */}
+      {isSyncing && (
+        <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
+          <p className="text-sm text-muted-foreground">正在同步 GitHub Star 数据...</p>
+        </div>
+      )}
       <header className="app__header flex items-center justify-between px-4 py-3 border-b border-border bg-card">
         <h1 className="text-sm font-semibold text-foreground">GitHub Star Manager</h1>
         <div className="flex items-center gap-2">
@@ -194,7 +210,7 @@ export function App() {
           <div className="app__loading flex-1 flex items-center justify-center text-sm text-muted-foreground">
             加载中...
           </div>
-        ) : repos.length === 0 ? (
+        ) : isEmpty(repos) ? (
           <div className="app__no-data flex-1 flex flex-col items-center justify-center">
             <p className="text-sm text-muted-foreground mb-4">暂无 Star 数据</p>
             <Button onClick={handleSync} disabled={isSyncing}>

@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash-es";
 import type { GitHubUser, Settings } from "../types";
 import { verifyToken } from "./github-api";
 
@@ -6,6 +7,14 @@ const STORAGE_KEY = "github-star-manager-settings";
 const DEFAULT_SETTINGS: Settings = {
   token: "",
   uiMode: "popup",
+  autoSync: {
+    enabled: false,
+    frequency: "daily",
+    hour: 9,
+    minute: 0,
+    daysOfWeek: [1], // 周一
+    dayOfMonth: 1,
+  },
 };
 
 export async function getSettings(): Promise<Settings> {
@@ -36,5 +45,5 @@ export async function validateToken(token: string): Promise<GitHubUser> {
 
 export async function isLoggedIn(): Promise<boolean> {
   const token = await getToken();
-  return token.length > 0;
+  return !isEmpty(token);
 }

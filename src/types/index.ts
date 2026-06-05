@@ -41,7 +41,19 @@ export interface GitHubUser {
 
 export type UIMode = "popup" | "sidebar";
 
+export type SyncFrequency = "daily" | "weekly" | "monthly";
+
+export interface AutoSyncConfig {
+  enabled: boolean;
+  frequency: SyncFrequency;
+  hour: number; // 0-23
+  minute: number; // 0-59
+  daysOfWeek?: number[]; // 0-6, 0=周日, 用于 weekly
+  dayOfMonth?: number; // 1-31, 用于 monthly
+}
+
 export interface Settings {
   token: string;
   uiMode: UIMode;
+  autoSync: AutoSyncConfig;
 }

@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash-es";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import type { StarList } from "../types";
@@ -9,7 +10,7 @@ interface ListPanelProps {
 }
 
 export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelProps) {
-  if (starLists.length === 0) {
+  if (isEmpty(starLists)) {
     return null;
   }
 

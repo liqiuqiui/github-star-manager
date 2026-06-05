@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { isEmpty } from "lodash-es";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { Repo } from "../types";
 import { StarCard } from "./StarCard";
@@ -19,7 +20,7 @@ export function StarList({ repos, selectedRepos, onSelect }: StarListProps) {
     gap: 8,
   });
 
-  if (repos.length === 0) {
+  if (isEmpty(repos)) {
     return (
       <div className="star-list__empty text-center text-muted-foreground py-8 text-sm">
         没有找到匹配的仓库
@@ -28,11 +29,7 @@ export function StarList({ repos, selectedRepos, onSelect }: StarListProps) {
   }
 
   return (
-    <div
-      ref={parentRef}
-      className="star-list__scroll overflow-auto"
-      // style={{ height: "calc(100vh - 280px)", minHeight: "200px" }}
-    >
+    <div ref={parentRef} className="star-list__scroll overflow-auto">
       <div
         className="star-list__virtual-container"
         style={{

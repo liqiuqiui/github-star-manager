@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { isEmpty, groupBy, sortBy, flatten } from "lodash-es";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import type { RepoTagMap } from "../types";
@@ -13,20 +14,20 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
   const [showAll, setShowAll] = useState(false);
 
   const tagCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const tags of Object.values(repoTags)) {
-      for (const tag of tags) {
-        counts[tag] = (counts[tag] || 0) + 1;
-      }
-    }
-    return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .map(([name, count]) => ({ name, count }));
+    const allTags = flatten(Object.values(repoTags));
+    const grouped = groupBy(allTags);
+    return sortBy(
+      Object.entries(grouped).map(([name, occurrences]) => ({
+        name,
+        count: occurrences.length,
+      })),
+      [(item) => -item.count],
+    );
   }, [repoTags]);
 
   const displayTags = showAll ? tagCounts : tagCounts.slice(0, 20);
 
-  if (tagCounts.length === 0) {
+  if (isEmpty(tagCounts)) {
     return null;
   }
 

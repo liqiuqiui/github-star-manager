@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash-es";
 import { Star } from "lucide-react";
 import { cn } from "../lib/utils";
 import { Checkbox } from "./ui/checkbox";
@@ -63,7 +64,7 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
             </span>
             <span>{new Date(repo.starredAt).toLocaleDateString()}</span>
           </div>
-          {repo.topics.length > 0 && (
+          {!isEmpty(repo.topics) && (
             <div className="star-card__topics flex flex-wrap gap-1 mt-1.5">
               {repo.topics.slice(0, 5).map((topic) => (
                 <Badge key={topic} variant="secondary" className="text-[10px] px-1.5 py-0.5">
