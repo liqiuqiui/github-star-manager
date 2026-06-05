@@ -1,0 +1,82 @@
+# GitHub Star 管理 — 竞品分析
+
+> 调研日期：2026-06-05
+
+## Chrome 插件竞品
+
+| 插件 | 评分 | 标签 | 笔记 | 搜索 | 同步 | 状态 |
+|------|------|------|------|------|------|------|
+| DevHub - Stars with Memory | 4.5 | ✅ | ✅ | ✅ | 未知 | 不确定 |
+| Star History | 4.9 | ❌ | ❌ | ❌ | - | 活跃（非管理工具） |
+| GitHub Star Notes | 5.0 | ❌ | ✅ | 未知 | ✅ | 不确定 |
+| Quick Repo Organizer | 0.0 | 未知 | 未知 | 未知 | 未知 | 不确定 |
+| GitHub Starred Lists | 0.0 | ❌ | ❌ | ❌ | ✅ | 不确定 |
+| GitHub Favorites | 0.0 | ❌ | ❌ | ❌ | ❌ | 不确定 |
+
+## 开源项目（均已归档/停滞）
+
+| 项目 | GitHub Stars | 标签 | 笔记 | 搜索 | 同步 | 状态 |
+|------|-------------|------|------|------|------|------|
+| Remu | 518 | ✅ | ✅ | ✅ | Gist | 🔴 已归档 2022 |
+| The Fucking Github | 587 | ✅ | ❌ | ✅ | Google | 🔴 已归档 2020 |
+| StarCabinet | 407 | ✅ | ❌ | ✅ | ❌ | 🔴 停滞 2018 |
+| GitHub Stars Manager | 233 | ✅ | ❌ | ❌ | Chrome | 🔴 停滞 2018 |
+
+### Remu（最全面的已归档项目）
+
+- **技术栈**: TypeScript + React + Ant Design
+- **功能**: 标签管理、笔记、Star 历史、快速操作（取消 Star/下载 ZIP/克隆）、Gist 同步
+- **不足**: 已归档，作者建议迁移到 GitHub 原生 Lists
+
+### The Fucking Github
+
+- **技术栈**: Vue + Laravel Mix
+- **功能**: 标签分类搜索、README 目录生成、在线搜索仓库
+- **不足**: 已归档 2020 年，仅限 Chrome
+
+## Web 应用
+
+| 工具 | GitHub Stars | 核心功能 | 状态 |
+|------|-------------|---------|------|
+| Astral | 3.5k | 标签分类、搜索、README 查看 | 🟡 维护缓慢（PHP 过时） |
+| Star History | - | Star 增长趋势图表 | ✅ 活跃 |
+| Best of JS | 3.1k | JS 生态项目发现排行 | ✅ 活跃 |
+| Daily Stars Explorer | 371 | Star 历史和活动分析 | ✅ 活跃 |
+
+### Astral
+
+- **技术栈**: PHP (Laravel) + Vue.js
+- **功能**: 自定义标签、多规则过滤、全文搜索、README 内嵌查看
+- **不足**: PHP 7 过时、无团队协作、无移动端、无数据导出
+
+## GitHub 官方：Star Lists（公开预览）
+
+- 将 starred 仓库分组到命名列表
+- **局限**：
+  - 32 个列表上限
+  - 默认公开，隐私控制有限
+  - 无标签系统
+  - 搜索功能极其有限（仅名称匹配）
+  - 无笔记功能
+  - 无数据导出
+  - 无批量操作
+
+## 竞品对比总结
+
+| 工具/插件 | 类型 | 评分 | 标签 | 笔记 | 搜索 | 同步 | 状态 |
+|-----------|------|------|------|------|------|------|------|
+| DevHub | Chrome 扩展 | 4.5 | 有 | 有 | 有 | 未知 | 不确定 |
+| Star History | Chrome 扩展 | 4.9 | 无 | 无 | 无 | - | 活跃 |
+| GitHub Star Notes | Chrome 扩展 | 5.0 | 无 | 有 | 未知 | 有 | 不确定 |
+| Remu (开源) | Chrome 扩展 | - | 有 | 有 | 有 | 有(Gist) | 已归档 |
+| the-fucking-github (开源) | Chrome 扩展 | - | 有 | 无 | 有 | 有 | 已归档 |
+| stargazed (开源) | CLI | - | 按语言 | 无 | 无 | - | 维护中 |
+| daily-stars-explorer (开源) | Web 应用 | - | 无 | 无 | 有 | - | 活跃 |
+| GitHub Lists (官方) | 网页功能 | - | 列表 | 无 | 无 | 官方 | 公开预览 |
+
+## 市场机会
+
+1. **维护断层严重**：功能最全面的项目均已停止维护 2-6 年
+2. **Chrome 插件形态空白**：Chrome Web Store 上几乎没有活跃维护的 Star 管理插件
+3. **GitHub 官方执行力不足**：Star Lists 从 2021 年至今仍是预览，高票需求长期未解决
+4. **用户痛点真实且强烈**：社区讨论票数高达数百，用户明确表示愿意付费
