@@ -1,4 +1,6 @@
 import { useState, useMemo } from "react";
+import { ArrowUp, ArrowDown } from "lucide-react";
+import clsx from "clsx";
 import type { Repo } from "../types";
 import { StarCard } from "./StarCard";
 
@@ -11,6 +13,9 @@ interface StarListProps {
 
 type SortField = "starredAt" | "stargazerCount" | "pushedAt" | "name";
 type SortDirection = "asc" | "desc";
+
+const selectClass =
+  "border border-gray-200 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-600 focus:outline-none focus:border-gray-400";
 
 export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarListProps) {
   const [sortField, setSortField] = useState<SortField>("starredAt");
@@ -66,7 +71,7 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
         <select
           value={sortField}
           onChange={(e) => setSortField(e.target.value as SortField)}
-          className="border border-gray-200 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-600 focus:outline-none focus:border-gray-400"
+          className={selectClass}
         >
           <option value="starredAt">Star 时间</option>
           <option value="stargazerCount">Star 数</option>
@@ -77,12 +82,12 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
           onClick={() => setSortDirection((d) => (d === "asc" ? "desc" : "asc"))}
           className="border border-gray-200 rounded-md px-2.5 py-1.5 bg-white text-gray-500 hover:bg-gray-50 transition-colors"
         >
-          {sortDirection === "asc" ? "↑" : "↓"}
+          {sortDirection === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
         </button>
         <select
           value={langFilter}
           onChange={(e) => setLangFilter(e.target.value)}
-          className="border border-gray-200 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-600 focus:outline-none focus:border-gray-400"
+          className={selectClass}
         >
           <option value="">所有语言</option>
           {languages.map((lang) => (

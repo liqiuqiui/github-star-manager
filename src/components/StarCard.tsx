@@ -1,3 +1,5 @@
+import { Star } from "lucide-react";
+import clsx from "clsx";
 import type { Repo } from "../types";
 
 interface StarCardProps {
@@ -9,11 +11,10 @@ interface StarCardProps {
 export function StarCard({ repo, selected, onSelect }: StarCardProps) {
   return (
     <div
-      className={`border rounded-lg px-3 py-2.5 transition-colors ${
-        selected
-          ? "border-gray-800 bg-gray-50"
-          : "border-gray-150 hover:border-gray-300 bg-white"
-      }`}
+      className={clsx(
+        "border rounded-lg px-3 py-2.5 transition-colors",
+        selected ? "border-gray-800 bg-gray-50" : "border-gray-150 hover:border-gray-300 bg-white",
+      )}
     >
       <div className="flex items-start gap-2.5">
         <input
@@ -54,16 +55,7 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
               </span>
             )}
             <span className="flex items-center gap-0.5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="text-gray-300"
-              >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
+              <Star size={11} className="text-gray-300" fill="currentColor" />
               {repo.stargazerCount.toLocaleString()}
             </span>
             <span>{new Date(repo.starredAt).toLocaleDateString()}</span>

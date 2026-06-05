@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { ArrowLeft, Settings as SettingsIcon } from "lucide-react";
+import clsx from "clsx";
 import type { UIMode } from "../types";
 import { useSettingsStore } from "../stores/settingsStore";
 import { validateToken } from "../services/auth";
@@ -63,19 +65,7 @@ export function Settings({ onBack }: SettingsProps) {
           onClick={onBack}
           className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="m15 18-6-6 6-6" />
-          </svg>
+          <ArrowLeft size={16} />
         </button>
         <h2 className="text-sm font-semibold text-gray-800">设置</h2>
       </header>
@@ -117,26 +107,20 @@ export function Settings({ onBack }: SettingsProps) {
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1.5">UI 模式</label>
           <div className="flex gap-2">
-            <button
-              onClick={() => handleUIModeChange("popup")}
-              className={`flex-1 text-xs py-2.5 rounded-lg border transition-colors ${
-                uiMode === "popup"
-                  ? "border-gray-800 bg-gray-800 text-white"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              Popup 弹窗
-            </button>
-            <button
-              onClick={() => handleUIModeChange("sidebar")}
-              className={`flex-1 text-xs py-2.5 rounded-lg border transition-colors ${
-                uiMode === "sidebar"
-                  ? "border-gray-800 bg-gray-800 text-white"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              侧边栏
-            </button>
+            {(["popup", "sidebar"] as UIMode[]).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => handleUIModeChange(mode)}
+                className={clsx(
+                  "flex-1 text-xs py-2.5 rounded-lg border transition-colors",
+                  uiMode === mode
+                    ? "border-gray-800 bg-gray-800 text-white"
+                    : "border-gray-200 text-gray-600 hover:bg-gray-50",
+                )}
+              >
+                {mode === "popup" ? "Popup 弹窗" : "侧边栏"}
+              </button>
+            ))}
           </div>
         </div>
 

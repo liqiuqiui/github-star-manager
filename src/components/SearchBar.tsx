@@ -1,4 +1,6 @@
 import { useState, useCallback } from "react";
+import { Search, X } from "lucide-react";
+import clsx from "clsx";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -24,22 +26,7 @@ export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: S
 
   return (
     <div className="relative flex items-center">
-      <span className="absolute left-3 text-gray-300">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="15"
-          height="15"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.3-4.3" />
-        </svg>
-      </span>
+      <Search size={15} className="absolute left-3 text-gray-300" />
       <input
         type="text"
         value={query}
@@ -52,20 +39,7 @@ export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: S
           onClick={handleClear}
           className="absolute right-3 text-gray-300 hover:text-gray-500 transition-colors"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
+          <X size={14} />
         </button>
       )}
     </div>

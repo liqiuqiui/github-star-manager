@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import clsx from "clsx";
 import type { RepoTagMap } from "../types";
 
 interface TagPanelProps {
@@ -33,11 +34,12 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
       <div className="flex flex-wrap gap-1.5">
         <button
           onClick={() => onTagSelect(null)}
-          className={`text-xs px-2 py-1 rounded-full transition-colors ${
+          className={clsx(
+            "text-xs px-2 py-1 rounded-full transition-colors",
             selectedTag === null
-              ? "bg-blue-500 text-white"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-          }`}
+              ? "bg-gray-800 text-white"
+              : "bg-gray-100 text-gray-500 hover:bg-gray-200",
+          )}
         >
           全部
         </button>
@@ -45,11 +47,12 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
           <button
             key={name}
             onClick={() => onTagSelect(selectedTag === name ? null : name)}
-            className={`text-xs px-2 py-1 rounded-full transition-colors ${
+            className={clsx(
+              "text-xs px-2 py-1 rounded-full transition-colors",
               selectedTag === name
-                ? "bg-blue-500 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
+                ? "bg-gray-800 text-white"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200",
+            )}
           >
             {name}
             <span className="ml-1 opacity-60">{count}</span>
@@ -58,7 +61,7 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
         {tagCounts.length > 20 && (
           <button
             onClick={() => setShowAll(!showAll)}
-            className="text-xs px-2 py-1 rounded-full text-blue-500 hover:bg-blue-50"
+            className="text-xs px-2 py-1 rounded-full text-gray-400 hover:bg-gray-100"
           >
             {showAll ? "收起" : `+${tagCounts.length - 20}`}
           </button>
