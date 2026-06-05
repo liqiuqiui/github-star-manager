@@ -34,6 +34,7 @@
     "@types/chrome": "^0.1.42",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/webextension-polyfill": "^0.12.5",
     "@wxt-dev/module-react": "^1.1.5",
     "@wxt-dev/unocss": "^1.0.1",
     "lefthook": "^2.1.9",
