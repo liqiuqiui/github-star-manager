@@ -33,7 +33,7 @@ export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelPr
             className="list-panel__item rounded-md text-xs h-7"
           >
             {list.name}
-            <Badge variant="secondary" className="list-panel__count ml-1 opacity-60">
+            <Badge variant="secondary" className="list-panel__count ml-1 opacity-50 px-1">
               {list.repositories.length}
             </Badge>
           </Button>

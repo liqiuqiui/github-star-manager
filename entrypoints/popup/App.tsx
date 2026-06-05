@@ -1,6 +1,15 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Settings as SettingsIcon } from "lucide-react";
+import { Settings as SettingsIcon, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "../../src/components/ui/button";
+import { Checkbox } from "../../src/components/ui/checkbox";
+import { Label } from "../../src/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../src/components/ui/select";
 import { useStarStore } from "../../src/stores/starStore";
 import { useSettingsStore } from "../../src/stores/settingsStore";
 import { SearchBar } from "../../src/components/SearchBar";
@@ -30,6 +39,11 @@ export function App() {
   const [selectedRepos, setSelectedRepos] = useState<Set<string>>(new Set());
   const [showSettings, setShowSettings] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [sortField, setSortField] = useState<"starredAt" | "stargazerCount" | "pushedAt" | "name">(
+    "starredAt",
+  );
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [langFilter, setLangFilter] = useState<string>("all");
 
   useEffect(() => {
     loadSettings().then(() => {
@@ -37,7 +51,17 @@ export function App() {
     });
   }, [loadSettings, loadFromCache]);
 
-  const filteredRepos = useMemo(() => {
+  const languages = useMemo(() => {
+    const langSet = new Set<string>();
+    for (const repo of repos) {
+      if (repo.primaryLanguage) {
+        langSet.add(repo.primaryLanguage.name);
+      }
+    }
+    return Array.from(langSet).sort();
+  }, [repos]);
+
+  const filteredAndSortedRepos = useMemo(() => {
     let result = repos;
 
     if (searchQuery) {
@@ -61,8 +85,41 @@ export function App() {
       }
     }
 
+    if (langFilter && langFilter !== "all") {
+      result = result.filter((r) => r.primaryLanguage?.name === langFilter);
+    }
+
+    result = [...result].sort((a, b) => {
+      let cmp = 0;
+      switch (sortField) {
+        case "starredAt":
+          cmp = new Date(a.starredAt).getTime() - new Date(b.starredAt).getTime();
+          break;
+        case "stargazerCount":
+          cmp = a.stargazerCount - b.stargazerCount;
+          break;
+        case "pushedAt":
+          cmp = new Date(a.pushedAt).getTime() - new Date(b.pushedAt).getTime();
+          break;
+        case "name":
+          cmp = a.nameWithOwner.localeCompare(b.nameWithOwner);
+          break;
+      }
+      return sortDirection === "desc" ? -cmp : cmp;
+    });
+
     return result;
-  }, [repos, searchQuery, selectedTag, selectedList, repoTags, starLists]);
+  }, [
+    repos,
+    searchQuery,
+    selectedTag,
+    selectedList,
+    repoTags,
+    starLists,
+    langFilter,
+    sortField,
+    sortDirection,
+  ]);
 
   const handleSelect = useCallback((name: string, selected: boolean) => {
     setSelectedRepos((prev) => {
@@ -76,15 +133,19 @@ export function App() {
     });
   }, []);
 
+  const allSelected =
+    filteredAndSortedRepos.length > 0 &&
+    filteredAndSortedRepos.every((r) => selectedRepos.has(r.nameWithOwner));
+
   const handleSelectAll = useCallback(
     (selected: boolean) => {
       if (selected) {
-        setSelectedRepos(new Set(filteredRepos.map((r) => r.nameWithOwner)));
+        setSelectedRepos(new Set(filteredAndSortedRepos.map((r) => r.nameWithOwner)));
       } else {
         setSelectedRepos(new Set());
       }
     },
-    [filteredRepos],
+    [filteredAndSortedRepos],
   );
 
   const handleBatchUnstar = useCallback(async () => {
@@ -105,7 +166,7 @@ export function App() {
   }
 
   return (
-    <div className="app flex flex-col h-full min-h-[680px] min-w-[520px] w-full overflow-hidden max-h-100vh">
+    <div className="app flex flex-col h-full w-full overflow-hidden">
       <header className="app__header flex items-center justify-between px-4 py-3 border-b border-border bg-card">
         <h1 className="text-sm font-semibold text-foreground">GitHub Star Manager</h1>
         <div className="flex items-center gap-2">
@@ -161,14 +222,66 @@ export function App() {
               onClearSelection={() => setSelectedRepos(new Set())}
               isProcessing={isProcessing}
             />
-            <div className="app__list-container flex-1 overflow-y-auto">
-              <StarList
-                repos={filteredRepos}
-                selectedRepos={selectedRepos}
-                onSelect={handleSelect}
-                onSelectAll={handleSelectAll}
-              />
+            <div className="app__toolbar flex items-center gap-2 mb-3">
+              <Select
+                value={sortField}
+                onValueChange={(value) => setSortField(value as typeof sortField)}
+              >
+                <SelectTrigger className="app__sort-trigger w-[120px] h-8 text-xs">
+                  <SelectValue placeholder="排序方式" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="starredAt">Star 时间</SelectItem>
+                  <SelectItem value="stargazerCount">Star 数</SelectItem>
+                  <SelectItem value="pushedAt">最近更新</SelectItem>
+                  <SelectItem value="name">名称</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={langFilter} onValueChange={setLangFilter}>
+                <SelectTrigger className="app__lang-trigger w-[140px] h-8 text-xs">
+                  <SelectValue placeholder="所有语言" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">所有语言</SelectItem>
+                  {languages.map((lang) => (
+                    <SelectItem key={lang} value={lang}>
+                      {lang}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setSortDirection((d) => (d === "asc" ? "desc" : "asc"))}
+                className="app__sort-direction h-8 w-8"
+              >
+                {sortDirection === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+              </Button>
+              <span className="app__count text-muted-foreground ml-auto text-xs">
+                {filteredAndSortedRepos.length} 个仓库
+              </span>
             </div>
+            <div className="app__select-all flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1.5">
+                <Checkbox
+                  id="select-all"
+                  checked={allSelected}
+                  onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                />
+                <Label
+                  htmlFor="select-all"
+                  className="text-xs text-muted-foreground cursor-pointer"
+                >
+                  全选
+                </Label>
+              </div>
+            </div>
+            <StarList
+              repos={filteredAndSortedRepos}
+              selectedRepos={selectedRepos}
+              onSelect={handleSelect}
+            />
             {lastSyncTime && (
               <div className="app__sync-time text-xs text-muted-foreground text-center mt-2">
                 上次同步：{new Date(lastSyncTime).toLocaleString()}

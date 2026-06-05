@@ -64,7 +64,7 @@ export function Settings({ onBack }: SettingsProps) {
   };
 
   return (
-    <div className="flex flex-col h-full min-h-[480px] min-w-[320px] w-full">
+    <div className="flex flex-col h-full min-h-[480px] min-w-[300px] w-full">
       <header className="flex items-center gap-2 px-4 py-3 border-b border-border bg-card">
         <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
           <ArrowLeft size={16} />
