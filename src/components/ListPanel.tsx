@@ -14,13 +14,13 @@ export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelPr
   }
 
   return (
-    <div className="mb-3">
-      <div className="flex flex-wrap gap-1.5">
+    <div className="list-panel mb-3">
+      <div className="list-panel__list flex flex-wrap gap-1.5">
         <Button
           variant={selectedList === null ? "default" : "secondary"}
           size="sm"
           onClick={() => onListSelect(null)}
-          className="rounded-md text-xs h-7"
+          className="list-panel__item rounded-md text-xs h-7"
         >
           全部
         </Button>
@@ -30,10 +30,10 @@ export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelPr
             variant={selectedList === list.name ? "default" : "secondary"}
             size="sm"
             onClick={() => onListSelect(selectedList === list.name ? null : list.name)}
-            className="rounded-md text-xs h-7"
+            className="list-panel__item rounded-md text-xs h-7"
           >
             {list.name}
-            <Badge variant="secondary" className="ml-1 opacity-60">
+            <Badge variant="secondary" className="list-panel__count ml-1 opacity-60">
               {list.repositories.length}
             </Badge>
           </Button>

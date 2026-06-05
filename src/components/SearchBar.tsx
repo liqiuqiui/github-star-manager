@@ -26,21 +26,21 @@ export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: S
   }, [onSearch]);
 
   return (
-    <div className="relative flex items-center">
-      <Search size={15} className="absolute left-3 text-muted-foreground" />
+    <div className="search-bar relative flex items-center">
+      <Search size={15} className="search-bar__icon absolute left-3 text-muted-foreground" />
       <Input
         type="text"
         value={query}
         onChange={handleChange}
         placeholder={placeholder}
-        className="pl-9 pr-8"
+        className="search-bar__input pl-9 pr-8"
       />
       {query && (
         <Button
           variant="ghost"
           size="icon"
           onClick={handleClear}
-          className="absolute right-1 h-8 w-8"
+          className="search-bar__clear absolute right-1 h-8 w-8"
         >
           <X size={14} />
         </Button>

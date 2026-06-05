@@ -20,8 +20,8 @@ export function BatchActions({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg mb-3">
-      <span className="text-xs text-muted-foreground">
+    <div className="batch-actions flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg mb-3">
+      <span className="batch-actions__info text-xs text-muted-foreground">
         已选{" "}
         <Badge variant="secondary" className="ml-1">
           {selectedCount}
@@ -35,12 +35,12 @@ export function BatchActions({
           size="sm"
           onClick={() => setConfirmUnstar(true)}
           disabled={isProcessing}
-          className="text-destructive border-destructive/20 hover:bg-destructive/10"
+          className="batch-actions__unstar text-destructive border-destructive/20 hover:bg-destructive/10"
         >
           批量取消 Star
         </Button>
       ) : (
-        <div className="flex items-center gap-1.5">
+        <div className="batch-actions__confirm flex items-center gap-1.5">
           <span className="text-xs text-muted-foreground">确认取消？</span>
           <Button
             variant="destructive"
@@ -68,7 +68,7 @@ export function BatchActions({
         size="sm"
         onClick={onClearSelection}
         disabled={isProcessing}
-        className="text-muted-foreground"
+        className="batch-actions__clear text-muted-foreground"
       >
         清除
       </Button>

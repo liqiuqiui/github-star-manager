@@ -14,9 +14,9 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
   return (
     <div
       className={cn(
-        "border rounded-lg px-3 py-2.5 transition-colors",
+        "star-card border rounded-lg px-3 py-2.5 transition-colors",
         selected
-          ? "border-primary bg-muted"
+          ? "star-card--selected border-primary bg-muted"
           : "border-border hover:border-muted-foreground/50 bg-card",
       )}
     >
@@ -24,7 +24,7 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
         <Checkbox
           checked={selected}
           onCheckedChange={(checked) => onSelect(repo.nameWithOwner, checked as boolean)}
-          className="mt-1"
+          className="star-card__checkbox mt-1"
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -32,22 +32,22 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
               href={repo.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-foreground hover:text-muted-foreground truncate"
+              className="star-card__name text-sm font-medium text-foreground hover:text-muted-foreground truncate"
             >
               {repo.nameWithOwner}
             </a>
             {repo.isArchived && (
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
+              <Badge variant="secondary" className="star-card__archived text-[10px] px-1.5 py-0.5">
                 Archived
               </Badge>
             )}
           </div>
           {repo.description && (
-            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
+            <p className="star-card__description text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
               {repo.description}
             </p>
           )}
-          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted-foreground">
+          <div className="star-card__meta flex items-center gap-3 mt-1.5 text-[11px] text-muted-foreground">
             {repo.primaryLanguage && (
               <span className="flex items-center gap-1">
                 <span
@@ -64,7 +64,7 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
             <span>{new Date(repo.starredAt).toLocaleDateString()}</span>
           </div>
           {repo.topics.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1.5">
+            <div className="star-card__topics flex flex-wrap gap-1 mt-1.5">
               {repo.topics.slice(0, 5).map((topic) => (
                 <Badge key={topic} variant="secondary" className="text-[10px] px-1.5 py-0.5">
                   {topic}

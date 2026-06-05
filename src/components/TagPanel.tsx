@@ -31,13 +31,13 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
   }
 
   return (
-    <div className="mb-3">
-      <div className="flex flex-wrap gap-1.5">
+    <div className="tag-panel mb-3">
+      <div className="tag-panel__list flex flex-wrap gap-1.5">
         <Button
           variant={selectedTag === null ? "default" : "secondary"}
           size="sm"
           onClick={() => onTagSelect(null)}
-          className="rounded-md text-xs h-7"
+          className="tag-panel__item rounded-md text-xs h-7"
         >
           全部
         </Button>
@@ -47,10 +47,10 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
             variant={selectedTag === name ? "default" : "secondary"}
             size="sm"
             onClick={() => onTagSelect(selectedTag === name ? null : name)}
-            className="rounded-md text-xs h-7"
+            className="tag-panel__item rounded-md text-xs h-7"
           >
             {name}
-            <Badge variant="secondary" className="ml-1 opacity-60">
+            <Badge variant="secondary" className="tag-panel__count ml-1 opacity-60">
               {count}
             </Badge>
           </Button>
@@ -60,7 +60,7 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
             variant="ghost"
             size="sm"
             onClick={() => setShowAll(!showAll)}
-            className="rounded-md text-xs h-7 text-muted-foreground"
+            className="tag-panel__toggle rounded-md text-xs h-7 text-muted-foreground"
           >
             {showAll ? "收起" : `+${tagCounts.length - 20}`}
           </Button>

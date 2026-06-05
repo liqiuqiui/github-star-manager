@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
@@ -21,6 +22,8 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
   const [sortField, setSortField] = useState<SortField>("starredAt");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [langFilter, setLangFilter] = useState<string>("all");
+
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const languages = useMemo(() => {
     const langSet = new Set<string>();
@@ -65,11 +68,18 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
     filteredAndSorted.length > 0 &&
     filteredAndSorted.every((r) => selectedRepos.has(r.nameWithOwner));
 
+  const virtualizer = useVirtualizer({
+    count: filteredAndSorted.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    gap: 8,
+  });
+
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-3">
+    <div className="star-list">
+      <div className="star-list__toolbar flex items-center gap-2 mb-3">
         <Select value={sortField} onValueChange={(value) => setSortField(value as SortField)}>
-          <SelectTrigger className="w-[120px] h-8 text-xs">
+          <SelectTrigger className="star-list__sort-trigger w-[120px] h-8 text-xs">
             <SelectValue placeholder="排序方式" />
           </SelectTrigger>
           <SelectContent>
@@ -83,12 +93,12 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
           variant="outline"
           size="icon"
           onClick={() => setSortDirection((d) => (d === "asc" ? "desc" : "asc"))}
-          className="h-8 w-8"
+          className="star-list__sort-direction h-8 w-8"
         >
           {sortDirection === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
         </Button>
         <Select value={langFilter} onValueChange={setLangFilter}>
-          <SelectTrigger className="w-[140px] h-8 text-xs">
+          <SelectTrigger className="star-list__lang-trigger w-[140px] h-8 text-xs">
             <SelectValue placeholder="所有语言" />
           </SelectTrigger>
           <SelectContent>
@@ -100,12 +110,12 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
             ))}
           </SelectContent>
         </Select>
-        <span className="text-muted-foreground ml-auto text-xs">
+        <span className="star-list__count text-muted-foreground ml-auto text-xs">
           {filteredAndSorted.length} 个仓库
         </span>
       </div>
 
-      <div className="flex items-center gap-2 mb-2">
+      <div className="star-list__select-all flex items-center gap-2 mb-2">
         <div className="flex items-center gap-1.5">
           <Checkbox
             id="select-all"
@@ -118,19 +128,50 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        {filteredAndSorted.map((repo) => (
-          <StarCard
-            key={repo.nameWithOwner}
-            repo={repo}
-            selected={selectedRepos.has(repo.nameWithOwner)}
-            onSelect={onSelect}
-          />
-        ))}
-      </div>
-
-      {filteredAndSorted.length === 0 && (
-        <div className="text-center text-muted-foreground py-8 text-sm">没有找到匹配的仓库</div>
+      {filteredAndSorted.length === 0 ? (
+        <div className="star-list__empty text-center text-muted-foreground py-8 text-sm">
+          没有找到匹配的仓库
+        </div>
+      ) : (
+        <div
+          ref={parentRef}
+          className="star-list__scroll overflow-auto"
+          style={{ height: "calc(100vh - 280px)", minHeight: "200px" }}
+        >
+          <div
+            className="star-list__virtual-container"
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualItem) => {
+              const repo = filteredAndSorted[virtualItem.index];
+              return (
+                <div
+                  key={virtualItem.key}
+                  data-index={virtualItem.index}
+                  ref={virtualizer.measureElement}
+                  className="star-list__item"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                >
+                  <StarCard
+                    repo={repo}
+                    selected={selectedRepos.has(repo.nameWithOwner)}
+                    onSelect={onSelect}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );
