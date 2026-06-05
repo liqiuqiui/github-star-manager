@@ -46,5 +46,12 @@
     "*.{json,css}": [
       "oxfmt --write"
     ]
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lefthook",
+      "spawn-sync"
+    ]
   }
 }
