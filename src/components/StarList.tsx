@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
-import clsx from "clsx";
 import type { Repo } from "../types";
 import { StarCard } from "./StarCard";
 

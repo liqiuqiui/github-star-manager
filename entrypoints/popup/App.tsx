@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Settings as SettingsIcon, RefreshCw } from "lucide-react";
+import { Settings as SettingsIcon } from "lucide-react";
 import { useStarStore } from "../../src/stores/starStore";
 import { useSettingsStore } from "../../src/stores/settingsStore";
 import { SearchBar } from "../../src/components/SearchBar";

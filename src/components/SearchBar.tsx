@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import { Search, X } from "lucide-react";
-import clsx from "clsx";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;

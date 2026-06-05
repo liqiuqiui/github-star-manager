@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Settings as SettingsIcon } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import clsx from "clsx";
 import type { UIMode } from "../types";
 import { useSettingsStore } from "../stores/settingsStore";
