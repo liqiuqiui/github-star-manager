@@ -24,11 +24,11 @@ export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: S
 
   return (
     <div className="relative flex items-center">
-      <span className="absolute left-3 text-gray-400">
+      <span className="absolute left-3 text-gray-300">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
+          width="15"
+          height="15"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -45,12 +45,12 @@ export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: S
         value={query}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+        className="w-full pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-700 placeholder-gray-300 focus:outline-none focus:border-gray-400 transition-colors"
       />
       {query && (
         <button
           onClick={handleClear}
-          className="absolute right-3 text-gray-400 hover:text-gray-600"
+          className="absolute right-3 text-gray-300 hover:text-gray-500 transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

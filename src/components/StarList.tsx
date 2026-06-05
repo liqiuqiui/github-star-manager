@@ -66,7 +66,7 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
         <select
           value={sortField}
           onChange={(e) => setSortField(e.target.value as SortField)}
-          className="border border-gray-300 rounded px-2 py-1 text-xs"
+          className="border border-gray-200 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-600 focus:outline-none focus:border-gray-400"
         >
           <option value="starredAt">Star 时间</option>
           <option value="stargazerCount">Star 数</option>
@@ -75,14 +75,14 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
         </select>
         <button
           onClick={() => setSortDirection((d) => (d === "asc" ? "desc" : "asc"))}
-          className="border border-gray-300 rounded px-2 py-1 hover:bg-gray-50"
+          className="border border-gray-200 rounded-md px-2.5 py-1.5 bg-white text-gray-500 hover:bg-gray-50 transition-colors"
         >
           {sortDirection === "asc" ? "↑" : "↓"}
         </button>
         <select
           value={langFilter}
           onChange={(e) => setLangFilter(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 text-xs"
+          className="border border-gray-200 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-600 focus:outline-none focus:border-gray-400"
         >
           <option value="">所有语言</option>
           {languages.map((lang) => (
@@ -95,11 +95,12 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
       </div>
 
       <div className="flex items-center gap-2 mb-2">
-        <label className="flex items-center gap-1 text-xs text-gray-500 cursor-pointer">
+        <label className="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer select-none">
           <input
             type="checkbox"
             checked={allSelected}
             onChange={(e) => onSelectAll(e.target.checked)}
+            className="rounded"
           />
           全选
         </label>
@@ -117,7 +118,7 @@ export function StarList({ repos, selectedRepos, onSelect, onSelectAll }: StarLi
       </div>
 
       {filteredAndSorted.length === 0 && (
-        <div className="text-center text-gray-400 py-8">没有找到匹配的仓库</div>
+        <div className="text-center text-gray-400 py-8 text-sm">没有找到匹配的仓库</div>
       )}
     </div>
   );

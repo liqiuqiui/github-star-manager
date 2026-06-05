@@ -93,20 +93,20 @@ export function App() {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-[480px] w-[380px]">
-      <header className="flex items-center justify-between p-3 border-b border-gray-200">
-        <h1 className="text-sm font-semibold">GitHub Star Manager</h1>
+    <div className="flex flex-col h-full min-h-[480px] min-w-[320px] w-full">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white">
+        <h1 className="text-sm font-semibold text-gray-800">GitHub Star Manager</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={handleSync}
             disabled={!token || isSyncing}
-            className="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+            className="text-xs px-3 py-1.5 bg-gray-800 text-white rounded-md hover:bg-gray-700 disabled:opacity-40 transition-colors"
           >
             {isSyncing ? "同步中..." : "同步"}
           </button>
           <button
             onClick={() => setShowSettings(true)}
-            className="text-gray-500 hover:text-gray-700"
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -126,26 +126,28 @@ export function App() {
         </div>
       </header>
 
-      <div className="p-3">
+      <div className="flex-1 overflow-hidden flex flex-col p-4">
         {!token ? (
-          <div className="text-center py-8">
-            <p className="text-sm text-gray-500 mb-3">请先配置 GitHub Token</p>
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <p className="text-sm text-gray-400 mb-4">请先配置 GitHub Token</p>
             <button
               onClick={() => setShowSettings(true)}
-              className="text-xs px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="text-sm px-5 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition-colors"
             >
               前往设置
             </button>
           </div>
         ) : isLoading ? (
-          <div className="text-center py-8 text-sm text-gray-500">加载中...</div>
+          <div className="flex-1 flex items-center justify-center text-sm text-gray-400">
+            加载中...
+          </div>
         ) : repos.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-sm text-gray-500 mb-3">暂无 Star 数据</p>
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <p className="text-sm text-gray-400 mb-4">暂无 Star 数据</p>
             <button
               onClick={handleSync}
               disabled={isSyncing}
-              className="text-xs px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+              className="text-sm px-5 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 disabled:opacity-40 transition-colors"
             >
               {isSyncing ? "同步中..." : "从 GitHub 同步"}
             </button>
