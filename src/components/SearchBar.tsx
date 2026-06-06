@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Search, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
@@ -8,7 +9,9 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: SearchBarProps) {
+export function SearchBar({ onSearch, placeholder }: SearchBarProps) {
+  const { t } = useTranslation();
+  const defaultPlaceholder = placeholder || t("searchBar.placeholder");
   const [query, setQuery] = useState("");
 
   const handleChange = useCallback(
@@ -32,7 +35,7 @@ export function SearchBar({ onSearch, placeholder = "搜索 Star 仓库..." }: S
         type="text"
         value={query}
         onChange={handleChange}
-        placeholder={placeholder}
+        placeholder={defaultPlaceholder}
         className="search-bar__input pl-9 pr-8"
       />
       {query && (

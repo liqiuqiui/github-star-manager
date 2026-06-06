@@ -1,3 +1,5 @@
+import { type SyncFrequency } from "../enums";
+
 export interface Repo {
   nameWithOwner: string;
   name: string;
@@ -41,8 +43,6 @@ export interface GitHubUser {
 
 export type UIMode = "popup" | "sidebar";
 
-export type SyncFrequency = "daily" | "weekly" | "monthly";
-
 export interface AutoSyncConfig {
   enabled: boolean;
   frequency: SyncFrequency;
@@ -56,4 +56,5 @@ export interface Settings {
   token: string;
   uiMode: UIMode;
   autoSync: AutoSyncConfig;
+  language?: string;
 }

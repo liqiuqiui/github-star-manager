@@ -1,6 +1,7 @@
-import { isEmpty } from "lodash-es";
+import { isEmpty, merge } from "lodash-es";
 import type { GitHubUser, Settings } from "../types";
 import { verifyToken } from "./github-api";
+import { SyncFrequency } from "@/enums";
 
 const STORAGE_KEY = "github-star-manager-settings";
 
@@ -9,7 +10,7 @@ const DEFAULT_SETTINGS: Settings = {
   uiMode: "popup",
   autoSync: {
     enabled: false,
-    frequency: "daily",
+    frequency: SyncFrequency.Daily,
     hour: 9,
     minute: 0,
     daysOfWeek: [1], // 周一
@@ -26,7 +27,7 @@ export async function getSettings(): Promise<Settings> {
 export async function saveSettings(settings: Partial<Settings>): Promise<void> {
   const current = await getSettings();
   await browser.storage.sync.set({
-    [STORAGE_KEY]: { ...current, ...settings },
+    [STORAGE_KEY]: merge({}, current, settings),
   });
 }
 

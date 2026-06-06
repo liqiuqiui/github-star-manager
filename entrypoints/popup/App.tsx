@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { isEmpty, uniq, sortBy, orderBy } from "lodash-es";
 import { Settings as SettingsIcon, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../src/components/ui/button";
 import { Checkbox } from "../../src/components/ui/checkbox";
 import { Label } from "../../src/components/ui/label";
@@ -21,6 +22,7 @@ import { ListPanel } from "../../src/components/ListPanel";
 import { Settings } from "../../src/components/Settings";
 
 export function App() {
+  const { t } = useTranslation();
   const {
     repos,
     starLists,
@@ -181,14 +183,14 @@ export function App() {
       {isSyncing && (
         <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
-          <p className="text-sm text-muted-foreground">正在同步 GitHub Star 数据...</p>
+          <p className="text-sm text-muted-foreground">{t("app.syncMessage")}</p>
         </div>
       )}
       <header className="app__header flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-        <h1 className="text-sm font-semibold text-foreground">GitHub Star Manager</h1>
+        <h1 className="text-sm font-semibold text-foreground">{t("app.title")}</h1>
         <div className="flex items-center gap-2">
           <Button size="sm" onClick={handleSync} disabled={!token || isSyncing} className="h-8">
-            {isSyncing ? "同步中..." : "同步"}
+            {isSyncing ? t("app.syncing") : t("app.sync")}
           </Button>
           <Button
             variant="ghost"
@@ -204,18 +206,18 @@ export function App() {
       <div className="app__content flex-1 overflow-hidden flex flex-col p-4">
         {!token ? (
           <div className="app__empty flex-1 flex flex-col items-center justify-center">
-            <p className="text-sm text-muted-foreground mb-4">请先配置 GitHub Token</p>
-            <Button onClick={() => setShowSettings(true)}>前往设置</Button>
+            <p className="text-sm text-muted-foreground mb-4">{t("app.noToken")}</p>
+            <Button onClick={() => setShowSettings(true)}>{t("app.goToSettings")}</Button>
           </div>
         ) : isLoading ? (
           <div className="app__loading flex-1 flex items-center justify-center text-sm text-muted-foreground">
-            加载中...
+            {t("common.loading")}
           </div>
         ) : isEmpty(repos) ? (
           <div className="app__no-data flex-1 flex flex-col items-center justify-center">
-            <p className="text-sm text-muted-foreground mb-4">暂无 Star 数据</p>
+            <p className="text-sm text-muted-foreground mb-4">{t("app.noData")}</p>
             <Button onClick={handleSync} disabled={isSyncing}>
-              {isSyncing ? "同步中..." : "从 GitHub 同步"}
+              {isSyncing ? t("app.syncing") : t("app.syncFromGitHub")}
             </Button>
           </div>
         ) : (
@@ -239,21 +241,21 @@ export function App() {
                 onValueChange={(value) => setSortField(value as typeof sortField)}
               >
                 <SelectTrigger className="app__sort-trigger w-[120px] h-8 text-xs">
-                  <SelectValue placeholder="排序方式" />
+                  <SelectValue placeholder={t("app.sortPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="starredAt">Star 时间</SelectItem>
-                  <SelectItem value="stargazerCount">Star 数</SelectItem>
-                  <SelectItem value="pushedAt">最近更新</SelectItem>
-                  <SelectItem value="name">名称</SelectItem>
+                  <SelectItem value="starredAt">{t("app.sortByStarTime")}</SelectItem>
+                  <SelectItem value="stargazerCount">{t("app.sortByStarCount")}</SelectItem>
+                  <SelectItem value="pushedAt">{t("app.sortByLastUpdate")}</SelectItem>
+                  <SelectItem value="name">{t("app.sortByName")}</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={langFilter} onValueChange={setLangFilter}>
                 <SelectTrigger className="app__lang-trigger w-[140px] h-8 text-xs">
-                  <SelectValue placeholder="所有语言" />
+                  <SelectValue placeholder={t("app.allLanguages")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">所有语言</SelectItem>
+                  <SelectItem value="all">{t("app.allLanguages")}</SelectItem>
                   {languages.map((lang) => (
                     <SelectItem key={lang} value={lang}>
                       {lang}
@@ -273,7 +275,8 @@ export function App() {
                 {selectedRepos.size > 0 ? (
                   <>
                     <span className="text-xs text-muted-foreground">
-                      已选 <Badge variant="secondary">{selectedRepos.size}</Badge> 个
+                      {t("app.selected")} <Badge variant="secondary">{selectedRepos.size}</Badge>{" "}
+                      {t("app.selectedUnit")}
                     </span>
                     {!confirmUnstar ? (
                       <Button
@@ -283,7 +286,7 @@ export function App() {
                         disabled={isProcessing}
                         className="text-destructive border-destructive/20 hover:bg-destructive/10 h-7 text-xs"
                       >
-                        批量取消 Star
+                        {t("app.batchUnstar")}
                       </Button>
                     ) : (
                       <>
@@ -297,7 +300,7 @@ export function App() {
                           disabled={isProcessing}
                           className="h-7 text-xs"
                         >
-                          {isProcessing ? "处理中..." : "确认"}
+                          {isProcessing ? t("common.processing") : t("common.confirm")}
                         </Button>
                         <Button
                           variant="outline"
@@ -306,7 +309,7 @@ export function App() {
                           disabled={isProcessing}
                           className="h-7 text-xs"
                         >
-                          取消
+                          {t("common.cancel")}
                         </Button>
                       </>
                     )}
@@ -317,12 +320,12 @@ export function App() {
                       disabled={isProcessing}
                       className="text-muted-foreground h-7 text-xs"
                     >
-                      清除
+                      {t("common.clear")}
                     </Button>
                   </>
                 ) : (
                   <span className="app__count text-muted-foreground text-xs">
-                    {filteredAndSortedRepos.length} 个仓库
+                    {filteredAndSortedRepos.length} {t("app.repoCount")}
                   </span>
                 )}
               </div>
@@ -338,7 +341,7 @@ export function App() {
                   htmlFor="select-all"
                   className="text-xs text-muted-foreground cursor-pointer"
                 >
-                  全选
+                  {t("app.selectAll")}
                 </Label>
               </div>
             </div>
@@ -349,7 +352,8 @@ export function App() {
             />
             {lastSyncTime && (
               <div className="app__sync-time text-xs text-muted-foreground text-center mt-2">
-                上次同步：{new Date(lastSyncTime).toLocaleString()}
+                {t("app.lastSync")}
+                {new Date(lastSyncTime).toLocaleString()}
               </div>
             )}
           </>

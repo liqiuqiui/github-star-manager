@@ -1,5 +1,6 @@
 import { isEmpty } from "lodash-es";
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";
 import { Checkbox } from "./ui/checkbox";
 import { Badge } from "./ui/badge";
@@ -12,6 +13,7 @@ interface StarCardProps {
 }
 
 export function StarCard({ repo, selected, onSelect }: StarCardProps) {
+  const { t } = useTranslation();
   return (
     <div
       className={cn(
@@ -39,7 +41,7 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
             </a>
             {repo.isArchived && (
               <Badge variant="secondary" className="star-card__archived text-[10px] px-1.5 py-0.5">
-                Archived
+                {t("starCard.archived")}
               </Badge>
             )}
           </div>

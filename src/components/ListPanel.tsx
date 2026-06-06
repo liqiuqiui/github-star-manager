@@ -1,4 +1,5 @@
 import { isEmpty } from "lodash-es";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import type { StarList } from "../types";
@@ -10,6 +11,7 @@ interface ListPanelProps {
 }
 
 export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelProps) {
+  const { t } = useTranslation();
   if (isEmpty(starLists)) {
     return null;
   }
@@ -23,7 +25,7 @@ export function ListPanel({ starLists, selectedList, onListSelect }: ListPanelPr
           onClick={() => onListSelect(null)}
           className="list-panel__item rounded-md text-xs h-7"
         >
-          全部
+          {t("common.all")}
         </Button>
         {starLists.map((list) => (
           <Button

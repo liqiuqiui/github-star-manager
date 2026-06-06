@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { isEmpty, groupBy, sortBy, flatten } from "lodash-es";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import type { RepoTagMap } from "../types";
@@ -11,6 +12,7 @@ interface TagPanelProps {
 }
 
 export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) {
+  const { t } = useTranslation();
   const [showAll, setShowAll] = useState(false);
 
   const tagCounts = useMemo(() => {
@@ -40,7 +42,7 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
           onClick={() => onTagSelect(null)}
           className="tag-panel__item rounded-md text-xs h-7"
         >
-          全部
+          {t("common.all")}
         </Button>
         {displayTags.map(({ name, count }) => (
           <Button
@@ -63,7 +65,7 @@ export function TagPanel({ repoTags, selectedTag, onTagSelect }: TagPanelProps) 
             onClick={() => setShowAll(!showAll)}
             className="tag-panel__toggle rounded-md text-xs h-7 text-muted-foreground"
           >
-            {showAll ? "收起" : `+${tagCounts.length - 20}`}
+            {showAll ? t("tagPanel.collapse") : `+${tagCounts.length - 20}`}
           </Button>
         )}
       </div>

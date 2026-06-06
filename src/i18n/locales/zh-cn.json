@@ -1,0 +1,85 @@
+{
+  "common": {
+    "confirm": "确认",
+    "cancel": "取消",
+    "clear": "清除",
+    "save": "保存",
+    "loading": "加载中...",
+    "processing": "处理中...",
+    "all": "全部"
+  },
+  "app": {
+    "title": "GitHub Star Manager",
+    "syncing": "同步中...",
+    "sync": "同步",
+    "syncMessage": "正在同步 GitHub Star 数据...",
+    "noToken": "请先配置 GitHub Token",
+    "goToSettings": "前往设置",
+    "noData": "暂无 Star 数据",
+    "syncFromGitHub": "从 GitHub 同步",
+    "sortPlaceholder": "排序方式",
+    "sortByStarTime": "Star 时间",
+    "sortByStarCount": "Star 数",
+    "sortByLastUpdate": "最近更新",
+    "sortByName": "名称",
+    "allLanguages": "所有语言",
+    "selected": "已选",
+    "selectedUnit": "个",
+    "batchUnstar": "批量取消 Star",
+    "selectAll": "全选",
+    "repoCount": "个仓库",
+    "lastSync": "上次同步："
+  },
+  "settings": {
+    "title": "设置",
+    "validating": "验证中...",
+    "saveSuccess": "保存成功",
+    "tokenRequired": "请输入 Token",
+    "tokenInvalid": "Token 无效，请检查后重试",
+    "uiMode": "UI 模式",
+    "popupMode": "Popup 弹窗",
+    "sidebarMode": "侧边栏",
+    "theme": "主题",
+    "enableAutoSync": "启用自动同步",
+    "syncFrequency": "同步频率",
+    "selectWeekday": "选择星期",
+    "dayOfMonth": "每月几号",
+    "syncTime": "同步时间",
+    "hour": "时",
+    "minute": "分",
+    "saveSyncConfig": "保存同步配置",
+    "tokenPermissions": "Token 权限：read:user, repo",
+    "generateToken": "生成 Token →",
+    "language": "语言",
+    "frequencyDaily": "每天",
+    "frequencyWeekly": "每周",
+    "frequencyMonthly": "每月",
+    "weekdays": {
+      "sun": "日",
+      "mon": "一",
+      "tue": "二",
+      "wed": "三",
+      "thu": "四",
+      "fri": "五",
+      "sat": "六"
+    }
+  },
+  "searchBar": {
+    "placeholder": "搜索 Star 仓库..."
+  },
+  "starList": {
+    "noResults": "没有找到匹配的仓库"
+  },
+  "starCard": {
+    "archived": "已归档"
+  },
+  "tagPanel": {
+    "collapse": "收起"
+  },
+  "batchActions": {
+    "selected": "已选",
+    "selectedUnit": "个仓库",
+    "batchUnstar": "批量取消 Star",
+    "confirmCancel": "确认取消？"
+  }
+}

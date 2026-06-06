@@ -1,31 +1,53 @@
 import { useState, useEffect } from "react";
 import { defaultTo } from "lodash-es";
 import { ArrowLeft, Sun, Moon, Monitor } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type SupportedLanguage } from "../constants";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
-import type { UIMode, SyncFrequency, AutoSyncConfig } from "../types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import type { UIMode, AutoSyncConfig } from "../types";
 import { useSettingsStore } from "../stores/settingsStore";
 import { useTheme } from "../hooks/useTheme";
 import { validateToken } from "../services/auth";
 import type { GitHubUser } from "../types";
+import { SyncFrequency } from "../enums";
 
 interface SettingsProps {
   onBack: () => void;
 }
 
-const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
-
-const FREQUENCY_LABELS: Record<SyncFrequency, string> = {
-  daily: "每天",
-  weekly: "每周",
-  monthly: "每月",
-};
-
 export function Settings({ onBack }: SettingsProps) {
-  const { token, uiMode, autoSync, setToken, setUIMode, setAutoSync, loadSettings } =
-    useSettingsStore();
+  const { t } = useTranslation();
+  const {
+    token,
+    uiMode,
+    autoSync,
+    language,
+    setToken,
+    setUIMode,
+    setAutoSync,
+    setLanguage,
+    loadSettings,
+  } = useSettingsStore();
+
+  const WEEKDAYS = [
+    t("settings.weekdays.sun"),
+    t("settings.weekdays.mon"),
+    t("settings.weekdays.tue"),
+    t("settings.weekdays.wed"),
+    t("settings.weekdays.thu"),
+    t("settings.weekdays.fri"),
+    t("settings.weekdays.sat"),
+  ];
+
+  const FREQUENCY_LABELS: Record<SyncFrequency, string> = {
+    daily: t("settings.frequencyDaily"),
+    weekly: t("settings.frequencyWeekly"),
+    monthly: t("settings.frequencyMonthly"),
+  };
   const { theme, setTheme } = useTheme();
   const [tokenInput, setTokenInput] = useState(token);
   const [user, setUser] = useState<GitHubUser | null>(null);
@@ -55,7 +77,7 @@ export function Settings({ onBack }: SettingsProps) {
 
   const handleSaveToken = async () => {
     if (!tokenInput.trim()) {
-      setError("请输入 Token");
+      setError(t("settings.tokenRequired"));
       return;
     }
 
@@ -69,7 +91,7 @@ export function Settings({ onBack }: SettingsProps) {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
-      setError("Token 无效，请检查后重试");
+      setError(t("settings.tokenInvalid"));
       setUser(null);
     } finally {
       setIsValidating(false);
@@ -107,7 +129,7 @@ export function Settings({ onBack }: SettingsProps) {
         <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
           <ArrowLeft size={16} />
         </Button>
-        <h2 className="text-sm font-semibold text-foreground">设置</h2>
+        <h2 className="text-sm font-semibold text-foreground">{t("settings.title")}</h2>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -123,11 +145,11 @@ export function Settings({ onBack }: SettingsProps) {
               className="flex-1"
             />
             <Button onClick={handleSaveToken} disabled={isValidating}>
-              {isValidating ? "验证中..." : "保存"}
+              {isValidating ? t("settings.validating") : t("common.save")}
             </Button>
           </div>
           {error && <p className="text-xs text-destructive mt-1.5">{error}</p>}
-          {saved && <p className="text-xs text-green-600 mt-1.5">保存成功</p>}
+          {saved && <p className="text-xs text-green-600 mt-1.5">{t("settings.saveSuccess")}</p>}
           {user && (
             <div className="flex items-center gap-2 mt-2 p-2.5 bg-muted border border-border rounded-lg">
               <img src={user.avatarUrl} alt={user.login} className="w-7 h-7 rounded-full" />
@@ -141,7 +163,7 @@ export function Settings({ onBack }: SettingsProps) {
 
         {/* UI 模式 */}
         <div>
-          <Label className="mb-2 block">UI 模式</Label>
+          <Label className="mb-2 block">{t("settings.uiMode")}</Label>
           <div className="flex gap-2">
             {(["popup", "sidebar"] as UIMode[]).map((mode) => (
               <Button
@@ -150,7 +172,7 @@ export function Settings({ onBack }: SettingsProps) {
                 onClick={() => handleUIModeChange(mode)}
                 className="flex-1"
               >
-                {mode === "popup" ? "Popup 弹窗" : "侧边栏"}
+                {mode === "popup" ? t("settings.popupMode") : t("settings.sidebarMode")}
               </Button>
             ))}
           </div>
@@ -158,7 +180,7 @@ export function Settings({ onBack }: SettingsProps) {
 
         {/* 主题 */}
         <div>
-          <Label className="mb-2 block">主题</Label>
+          <Label className="mb-2 block">{t("settings.theme")}</Label>
           <div className="flex gap-2">
             <Button
               variant={theme === "light" ? "default" : "outline"}
@@ -187,6 +209,23 @@ export function Settings({ onBack }: SettingsProps) {
           </div>
         </div>
 
+        {/* 语言 */}
+        <div>
+          <Label className="mb-2 block">{t("settings.language")}</Label>
+          <Select value={language} onValueChange={(val) => setLanguage(val as SupportedLanguage)}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SUPPORTED_LANGUAGES.map((lng) => (
+                <SelectItem key={lng} value={lng}>
+                  {LANGUAGE_LABELS[lng]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* 自动同步配置 */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -198,7 +237,7 @@ export function Settings({ onBack }: SettingsProps) {
               }
             />
             <Label htmlFor="auto-sync-enabled" className="cursor-pointer">
-              启用自动同步
+              {t("settings.enableAutoSync")}
             </Label>
           </div>
 
@@ -206,9 +245,9 @@ export function Settings({ onBack }: SettingsProps) {
             <div className="pl-6 space-y-4 border-l-2 border-muted">
               {/* 频率选择 */}
               <div>
-                <Label className="mb-2 block text-xs">同步频率</Label>
+                <Label className="mb-2 block text-xs">{t("settings.syncFrequency")}</Label>
                 <div className="flex gap-2">
-                  {(["daily", "weekly", "monthly"] as SyncFrequency[]).map((freq) => (
+                  {Object.values(SyncFrequency).map((freq) => (
                     <Button
                       key={freq}
                       variant={syncConfig.frequency === freq ? "default" : "outline"}
@@ -224,7 +263,7 @@ export function Settings({ onBack }: SettingsProps) {
               {/* 每周：选择星期 */}
               {syncConfig.frequency === "weekly" && (
                 <div>
-                  <Label className="mb-2 block text-xs">选择星期</Label>
+                  <Label className="mb-2 block text-xs">{t("settings.selectWeekday")}</Label>
                   <div className="flex gap-1.5">
                     {WEEKDAYS.map((day, index) => (
                       <Button
@@ -248,7 +287,7 @@ export function Settings({ onBack }: SettingsProps) {
               {/* 每月：选择日期 */}
               {syncConfig.frequency === "monthly" && (
                 <div>
-                  <Label className="mb-2 block text-xs">每月几号</Label>
+                  <Label className="mb-2 block text-xs">{t("settings.dayOfMonth")}</Label>
                   <Input
                     type="number"
                     min="1"
@@ -275,7 +314,7 @@ export function Settings({ onBack }: SettingsProps) {
 
               {/* 时间选择 */}
               <div>
-                <Label className="mb-2 block text-xs">同步时间</Label>
+                <Label className="mb-2 block text-xs">{t("settings.syncTime")}</Label>
                 <div className="flex gap-2 items-center">
                   <Input
                     type="number"
@@ -298,7 +337,7 @@ export function Settings({ onBack }: SettingsProps) {
                     }}
                     className="w-16"
                   />
-                  <span className="text-sm">时</span>
+                  <span className="text-sm">{t("settings.hour")}</span>
                   <Input
                     type="number"
                     min="0"
@@ -320,13 +359,13 @@ export function Settings({ onBack }: SettingsProps) {
                     }}
                     className="w-16"
                   />
-                  <span className="text-sm">分</span>
+                  <span className="text-sm">{t("settings.minute")}</span>
                 </div>
               </div>
 
               {/* 保存按钮 */}
               <Button size="sm" onClick={handleSaveAutoSync}>
-                保存同步配置
+                {t("settings.saveSyncConfig")}
               </Button>
             </div>
           )}
@@ -334,14 +373,14 @@ export function Settings({ onBack }: SettingsProps) {
 
         {/* Token 权限说明 */}
         <div className="text-xs text-muted-foreground space-y-1">
-          <p>Token 权限：read:user, repo</p>
+          <p>{t("settings.tokenPermissions")}</p>
           <a
             href="https://github.com/settings/tokens/new?scopes=read:user,repo&description=GitHubStarManager"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground hover:text-foreground/80 transition-colors"
           >
-            生成 Token →
+            {t("settings.generateToken")}
           </a>
         </div>
       </div>

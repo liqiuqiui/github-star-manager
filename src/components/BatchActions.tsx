@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
@@ -15,6 +16,7 @@ export function BatchActions({
   onClearSelection,
   isProcessing,
 }: BatchActionsProps) {
+  const { t } = useTranslation();
   const [confirmUnstar, setConfirmUnstar] = useState(false);
 
   if (selectedCount === 0) return null;
@@ -22,11 +24,11 @@ export function BatchActions({
   return (
     <div className="batch-actions flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-lg mb-3">
       <span className="batch-actions__info text-xs text-muted-foreground">
-        已选{" "}
+        {t("batchActions.selected")}{" "}
         <Badge variant="secondary" className="ml-1">
           {selectedCount}
         </Badge>{" "}
-        个仓库
+        {t("batchActions.selectedUnit")}
       </span>
       <div className="flex-1" />
       {!confirmUnstar ? (
@@ -37,11 +39,11 @@ export function BatchActions({
           disabled={isProcessing}
           className="batch-actions__unstar text-destructive border-destructive/20 hover:bg-destructive/10"
         >
-          批量取消 Star
+          {t("batchActions.batchUnstar")}
         </Button>
       ) : (
         <div className="batch-actions__confirm flex items-center gap-1.5">
-          <span className="text-xs text-muted-foreground">确认取消？</span>
+          <span className="text-xs text-muted-foreground">{t("batchActions.confirmCancel")}</span>
           <Button
             variant="destructive"
             size="sm"
@@ -51,7 +53,7 @@ export function BatchActions({
             }}
             disabled={isProcessing}
           >
-            {isProcessing ? "处理中..." : "确认"}
+            {isProcessing ? t("common.processing") : t("common.confirm")}
           </Button>
           <Button
             variant="outline"
@@ -59,7 +61,7 @@ export function BatchActions({
             onClick={() => setConfirmUnstar(false)}
             disabled={isProcessing}
           >
-            取消
+            {t("common.cancel")}
           </Button>
         </div>
       )}
@@ -70,7 +72,7 @@ export function BatchActions({
         disabled={isProcessing}
         className="batch-actions__clear text-muted-foreground"
       >
-        清除
+        {t("common.clear")}
       </Button>
     </div>
   );

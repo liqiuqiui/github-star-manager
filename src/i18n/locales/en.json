@@ -1,0 +1,85 @@
+{
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "save": "Save",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "all": "All"
+  },
+  "app": {
+    "title": "GitHub Star Manager",
+    "syncing": "Syncing...",
+    "sync": "Sync",
+    "syncMessage": "Syncing GitHub Star data...",
+    "noToken": "Please configure GitHub Token first",
+    "goToSettings": "Go to Settings",
+    "noData": "No Star data yet",
+    "syncFromGitHub": "Sync from GitHub",
+    "sortPlaceholder": "Sort by",
+    "sortByStarTime": "Star Time",
+    "sortByStarCount": "Star Count",
+    "sortByLastUpdate": "Last Update",
+    "sortByName": "Name",
+    "allLanguages": "All Languages",
+    "selected": "Selected",
+    "selectedUnit": " ",
+    "batchUnstar": "Batch Unstar",
+    "selectAll": "Select All",
+    "repoCount": "repos",
+    "lastSync": "Last synced: "
+  },
+  "settings": {
+    "title": "Settings",
+    "validating": "Validating...",
+    "saveSuccess": "Saved successfully",
+    "tokenRequired": "Please enter Token",
+    "tokenInvalid": "Invalid Token, please check and retry",
+    "uiMode": "UI Mode",
+    "popupMode": "Popup",
+    "sidebarMode": "Sidebar",
+    "theme": "Theme",
+    "enableAutoSync": "Enable Auto Sync",
+    "syncFrequency": "Sync Frequency",
+    "selectWeekday": "Select Weekday",
+    "dayOfMonth": "Day of Month",
+    "syncTime": "Sync Time",
+    "hour": "h",
+    "minute": "m",
+    "saveSyncConfig": "Save Sync Config",
+    "tokenPermissions": "Token permissions: read:user, repo",
+    "generateToken": "Generate Token →",
+    "language": "Language",
+    "frequencyDaily": "Daily",
+    "frequencyWeekly": "Weekly",
+    "frequencyMonthly": "Monthly",
+    "weekdays": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    }
+  },
+  "searchBar": {
+    "placeholder": "Search Star repos..."
+  },
+  "starList": {
+    "noResults": "No matching repos found"
+  },
+  "starCard": {
+    "archived": "Archived"
+  },
+  "tagPanel": {
+    "collapse": "Collapse"
+  },
+  "batchActions": {
+    "selected": "Selected",
+    "selectedUnit": "repos",
+    "batchUnstar": "Batch Unstar",
+    "confirmCancel": "Confirm unstar?"
+  }
+}

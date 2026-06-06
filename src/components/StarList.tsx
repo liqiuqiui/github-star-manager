@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { isEmpty } from "lodash-es";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useTranslation } from "react-i18next";
 import type { Repo } from "../types";
 import { StarCard } from "./StarCard";
 
@@ -11,6 +12,7 @@ interface StarListProps {
 }
 
 export function StarList({ repos, selectedRepos, onSelect }: StarListProps) {
+  const { t } = useTranslation();
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
@@ -23,7 +25,7 @@ export function StarList({ repos, selectedRepos, onSelect }: StarListProps) {
   if (isEmpty(repos)) {
     return (
       <div className="star-list__empty text-center text-muted-foreground py-8 text-sm">
-        没有找到匹配的仓库
+        {t("starList.noResults")}
       </div>
     );
   }
