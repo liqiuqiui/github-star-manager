@@ -4,6 +4,7 @@ import { Settings as SettingsIcon, ArrowUp, ArrowDown, Loader2 } from "lucide-re
 import { Button } from "../../src/components/ui/button";
 import { Checkbox } from "../../src/components/ui/checkbox";
 import { Label } from "../../src/components/ui/label";
+import { Badge } from "../../src/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -17,7 +18,6 @@ import { SearchBar } from "../../src/components/SearchBar";
 import { StarList } from "../../src/components/StarList";
 import { TagPanel } from "../../src/components/TagPanel";
 import { ListPanel } from "../../src/components/ListPanel";
-import { BatchActions } from "../../src/components/BatchActions";
 import { Settings } from "../../src/components/Settings";
 
 export function App() {
@@ -40,6 +40,7 @@ export function App() {
   const [selectedRepos, setSelectedRepos] = useState<Set<string>>(new Set());
   const [showSettings, setShowSettings] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [confirmUnstar, setConfirmUnstar] = useState(false);
   const [sortField, setSortField] = useState<"starredAt" | "stargazerCount" | "pushedAt" | "name">(
     "starredAt",
   );
@@ -232,12 +233,6 @@ export function App() {
                 onListSelect={setSelectedList}
               />
             </div>
-            <BatchActions
-              selectedCount={selectedRepos.size}
-              onBatchUnstar={handleBatchUnstar}
-              onClearSelection={() => setSelectedRepos(new Set())}
-              isProcessing={isProcessing}
-            />
             <div className="app__toolbar flex items-center gap-2 mb-3">
               <Select
                 value={sortField}
@@ -274,9 +269,63 @@ export function App() {
               >
                 {sortDirection === "asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
               </Button>
-              <span className="app__count text-muted-foreground ml-auto text-xs">
-                {filteredAndSortedRepos.length} 个仓库
-              </span>
+              <div className="flex items-center gap-2 ml-auto">
+                {selectedRepos.size > 0 ? (
+                  <>
+                    <span className="text-xs text-muted-foreground">
+                      已选 <Badge variant="secondary">{selectedRepos.size}</Badge> 个
+                    </span>
+                    {!confirmUnstar ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setConfirmUnstar(true)}
+                        disabled={isProcessing}
+                        className="text-destructive border-destructive/20 hover:bg-destructive/10 h-7 text-xs"
+                      >
+                        批量取消 Star
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => {
+                            handleBatchUnstar();
+                            setConfirmUnstar(false);
+                          }}
+                          disabled={isProcessing}
+                          className="h-7 text-xs"
+                        >
+                          {isProcessing ? "处理中..." : "确认"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setConfirmUnstar(false)}
+                          disabled={isProcessing}
+                          className="h-7 text-xs"
+                        >
+                          取消
+                        </Button>
+                      </>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedRepos(new Set())}
+                      disabled={isProcessing}
+                      className="text-muted-foreground h-7 text-xs"
+                    >
+                      清除
+                    </Button>
+                  </>
+                ) : (
+                  <span className="app__count text-muted-foreground text-xs">
+                    {filteredAndSortedRepos.length} 个仓库
+                  </span>
+                )}
+              </div>
             </div>
             <div className="app__select-all flex items-center gap-2 mb-2">
               <div className="flex items-center gap-1.5">
