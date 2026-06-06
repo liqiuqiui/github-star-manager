@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Generate CHANGELOG
+        id: changelog
+        run: |
+          # 获取上一个 tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          # 生成 CHANGELOG
+          if [ -z "$PREV_TAG" ]; then
+            # 首次发布，获取所有提交
+            CHANGES=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            # 获取两个 tag 之间的提交
+            CHANGES=$(git log --pretty=format:"- %s (%h)" --no-merges ${PREV_TAG}..HEAD)
+          fi
+
+          # 写入文件
+          echo "$CHANGES" > CHANGELOG_RELEASE.md
+
+          # 设置输出（用于 Release body）
+          {
+            echo "changes<<EOF"
+            echo "$CHANGES"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Package all extensions
+        run: pnpm package
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ steps.version.outputs.VERSION }}
+          body: |
+            ## What's Changed
+
+            ${{ steps.changelog.outputs.changes }}
+
+            ## Downloads
+
+            - [Chrome Extension](github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/github-star-manager-${{ steps.version.outputs.VERSION }}-chrome.zip)
+            - [Firefox Extension](github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/github-star-manager-${{ steps.version.outputs.VERSION }}-firefox.zip)
+            - [Edge Extension](github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/github-star-manager-${{ steps.version.outputs.VERSION }}-edge.zip)
+            - [Safari Extension](github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/github-star-manager-${{ steps.version.outputs.VERSION }}-safari.zip)
+          files: |
+            .output/github-star-manager-${{ steps.version.outputs.VERSION }}-chrome.zip
+            .output/github-star-manager-${{ steps.version.outputs.VERSION }}-firefox.zip
+            .output/github-star-manager-${{ steps.version.outputs.VERSION }}-edge.zip
+            .output/github-star-manager-${{ steps.version.outputs.VERSION }}-safari.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

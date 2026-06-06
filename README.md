@@ -83,8 +83,8 @@ github-star-manager/
 ## 🚀 开发指南
 
 ### 环境要求
-- Node.js >= 18
-- pnpm >= 8
+- Node.js >= 22
+- pnpm >= 10
 
 ### 安装依赖
 ```bash
@@ -93,20 +93,29 @@ pnpm install
 
 ### 开发模式
 ```bash
-# Chrome
+# Chrome (默认)
 pnpm dev
 
-# Firefox
+# 指定浏览器
+pnpm dev:chrome
 pnpm dev:firefox
+pnpm dev:edge
+pnpm dev:safari
 ```
 
 ### 构建
 ```bash
-# Chrome
+# 构建所有浏览器扩展
 pnpm build
 
-# Firefox
+# 构建指定浏览器
+pnpm build:chrome
 pnpm build:firefox
+pnpm build:edge
+pnpm build:safari
+
+# 构建并打包所有浏览器扩展
+pnpm package
 ```
 
 ### 代码检查
