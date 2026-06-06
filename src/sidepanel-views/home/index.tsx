@@ -2,26 +2,26 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { isEmpty, uniq, sortBy, orderBy } from "lodash-es";
 import { Settings as SettingsIcon, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "../../src/components/ui/button";
-import { Checkbox } from "../../src/components/ui/checkbox";
-import { Label } from "../../src/components/ui/label";
-import { Badge } from "../../src/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../src/components/ui/select";
-import { useStarStore } from "../../src/stores/starStore";
-import { useSettingsStore } from "../../src/stores/settingsStore";
-import { SearchBar } from "../../src/components/SearchBar";
-import { StarList } from "../../src/components/StarList";
-import { TagPanel } from "../../src/components/TagPanel";
-import { ListPanel } from "../../src/components/ListPanel";
-import { Settings } from "../../src/components/Settings";
+} from "@/components/ui/select";
+import { useStarStore } from "@/stores/starStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { SearchBar } from "@/components/SearchBar";
+import { StarList } from "@/components/StarList";
+import { TagPanel } from "@/components/TagPanel";
+import { ListPanel } from "@/components/ListPanel";
+import Settings from "@/sidepanel-views/settings";
 
-export function App() {
+export default function App() {
   const { t } = useTranslation();
   const {
     repos,

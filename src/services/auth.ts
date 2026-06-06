@@ -7,7 +7,6 @@ const STORAGE_KEY = "github-star-manager-settings";
 
 const DEFAULT_SETTINGS: Settings = {
   token: "",
-  uiMode: "popup",
   autoSync: {
     enabled: false,
     frequency: SyncFrequency.Daily,

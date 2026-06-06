@@ -10,49 +10,35 @@ export default defineBackground(() => {
 
   // Chrome-specific sidePanel API
   if (import.meta.env.CHROME) {
-    browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
-
-    browser.storage.sync.get(STORAGE_KEY).then((result) => {
-      const settings = result[STORAGE_KEY] as
-        | { uiMode?: string; autoSync?: AutoSyncConfig }
-        | undefined;
-      if (settings?.uiMode === "sidebar") {
-        browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
-        browser.action.setPopup({ popup: "" });
-      }
-      // 初始化自动同步
-      if (settings?.autoSync?.enabled) {
-        setupAutoSyncCheck();
-      }
-    });
-
-    browser.storage.onChanged.addListener((changes) => {
-      if (changes[STORAGE_KEY]) {
-        const newSettings = changes[STORAGE_KEY].newValue as
-          | { uiMode?: string; autoSync?: AutoSyncConfig }
-          | undefined;
-
-        // UI 模式切换
-        if (newSettings?.uiMode === "sidebar") {
-          browser.action.setPopup({ popup: "" });
-          browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
-        } else {
-          browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
-          browser.action.setPopup({ popup: "/popup.html" });
-        }
-
-        // 自动同步配置更新
-        if (newSettings?.autoSync) {
-          if (newSettings.autoSync.enabled) {
-            setupAutoSyncCheck();
-          } else {
-            browser.alarms.clear(CHECK_ALARM_NAME);
-            console.log("Auto-sync disabled");
-          }
-        }
-      }
-    });
+    browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
   }
+
+  // 初始化自动同步
+  browser.storage.sync.get(STORAGE_KEY).then((result) => {
+    const settings = result[STORAGE_KEY] as { autoSync?: AutoSyncConfig } | undefined;
+    if (settings?.autoSync?.enabled) {
+      setupAutoSyncCheck();
+    }
+  });
+
+  // 监听设置变更
+  browser.storage.onChanged.addListener((changes) => {
+    if (changes[STORAGE_KEY]) {
+      const newSettings = changes[STORAGE_KEY].newValue as
+        | { autoSync?: AutoSyncConfig }
+        | undefined;
+
+      // 自动同步配置更新
+      if (newSettings?.autoSync) {
+        if (newSettings.autoSync.enabled) {
+          setupAutoSyncCheck();
+        } else {
+          browser.alarms.clear(CHECK_ALARM_NAME);
+          console.log("Auto-sync disabled");
+        }
+      }
+    }
+  });
 
   // 设置检查 alarm（每分钟检查一次是否需要同步）
   function setupAutoSyncCheck() {
@@ -109,11 +95,11 @@ export default defineBackground(() => {
   // 触发同步
   function triggerSync() {
     browser.runtime.sendMessage({ type: "TRIGGER_SYNC" }).catch(() => {
-      // popup/sidepanel 可能未打开，忽略错误
+      // sidepanel 可能未打开，忽略错误
     });
   }
 
-  // 监听来自 content script 和 popup/sidepanel 的消息
+  // 监听来自 content script 和 sidepanel 的消息
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "GITHUB_STAR_CHANGED") {
       console.log("GitHub star change detected:", message.action);

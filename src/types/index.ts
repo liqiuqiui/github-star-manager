@@ -41,8 +41,6 @@ export interface GitHubUser {
   name: string;
 }
 
-export type UIMode = "popup" | "sidebar";
-
 export interface AutoSyncConfig {
   enabled: boolean;
   frequency: SyncFrequency;
@@ -54,7 +52,6 @@ export interface AutoSyncConfig {
 
 export interface Settings {
   token: string;
-  uiMode: UIMode;
   autoSync: AutoSyncConfig;
   language?: string;
 }

@@ -2,36 +2,33 @@ import { useState, useEffect } from "react";
 import { defaultTo } from "lodash-es";
 import { ArrowLeft, Sun, Moon, Monitor } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type SupportedLanguage } from "../constants";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Checkbox } from "./ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import type { UIMode, AutoSyncConfig } from "../types";
-import { useSettingsStore } from "../stores/settingsStore";
-import { useTheme } from "../hooks/useTheme";
-import { validateToken } from "../services/auth";
-import type { GitHubUser } from "../types";
-import { SyncFrequency } from "../enums";
+import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type SupportedLanguage } from "../../constants";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Checkbox } from "../../components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import type { AutoSyncConfig } from "../../types";
+import { useSettingsStore } from "../../stores/settingsStore";
+import { useTheme } from "../../hooks/useTheme";
+import { validateToken } from "../../services/auth";
+import type { GitHubUser } from "../../types";
+import { SyncFrequency } from "../../enums";
 
 interface SettingsProps {
   onBack: () => void;
 }
 
-export function Settings({ onBack }: SettingsProps) {
+export default function Settings({ onBack }: SettingsProps) {
   const { t } = useTranslation();
-  const {
-    token,
-    uiMode,
-    autoSync,
-    language,
-    setToken,
-    setUIMode,
-    setAutoSync,
-    setLanguage,
-    loadSettings,
-  } = useSettingsStore();
+  const { token, autoSync, language, setToken, setAutoSync, setLanguage, loadSettings } =
+    useSettingsStore();
 
   const WEEKDAYS = [
     t("settings.weekdays.sun"),
@@ -98,17 +95,6 @@ export function Settings({ onBack }: SettingsProps) {
     }
   };
 
-  const handleUIModeChange = async (mode: UIMode) => {
-    await setUIMode(mode);
-    if (mode === "sidebar") {
-      try {
-        await browser.runtime.sendMessage({ type: "OPEN_SIDEPANEL" });
-      } catch {
-        // 忽略错误
-      }
-    }
-  };
-
   const handleSaveAutoSync = async () => {
     await setAutoSync(syncConfig);
     setSaved(true);
@@ -159,23 +145,6 @@ export function Settings({ onBack }: SettingsProps) {
               </div>
             </div>
           )}
-        </div>
-
-        {/* UI 模式 */}
-        <div>
-          <Label className="mb-2 block">{t("settings.uiMode")}</Label>
-          <div className="flex gap-2">
-            {(["popup", "sidebar"] as UIMode[]).map((mode) => (
-              <Button
-                key={mode}
-                variant={uiMode === mode ? "default" : "outline"}
-                onClick={() => handleUIModeChange(mode)}
-                className="flex-1"
-              >
-                {mode === "popup" ? t("settings.popupMode") : t("settings.sidebarMode")}
-              </Button>
-            ))}
-          </div>
         </div>
 
         {/* 主题 */}

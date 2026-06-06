@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { UIMode, AutoSyncConfig } from "../types";
+import type { AutoSyncConfig } from "../types";
 import { getSettings, saveSettings } from "../services/auth";
 import i18n from "../i18n";
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, type SupportedLanguage } from "../constants";
@@ -7,14 +7,12 @@ import { SyncFrequency } from "../enums";
 
 interface SettingsState {
   token: string;
-  uiMode: UIMode;
   autoSync: AutoSyncConfig;
   language: SupportedLanguage;
   isLoading: boolean;
 
   loadSettings: () => Promise<void>;
   setToken: (token: string) => Promise<void>;
-  setUIMode: (mode: UIMode) => Promise<void>;
   setAutoSync: (config: AutoSyncConfig) => Promise<void>;
   setLanguage: (language: SupportedLanguage) => Promise<void>;
 }
@@ -30,7 +28,6 @@ const DEFAULT_AUTO_SYNC: AutoSyncConfig = {
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   token: "",
-  uiMode: "popup",
   autoSync: DEFAULT_AUTO_SYNC,
   language: DEFAULT_LANGUAGE,
   isLoading: false,
@@ -48,7 +45,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     i18n.changeLanguage(language);
     set({
       token: settings.token,
-      uiMode: settings.uiMode,
       autoSync: settings.autoSync || DEFAULT_AUTO_SYNC,
       language,
       isLoading: false,
@@ -58,11 +54,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   setToken: async (token: string) => {
     await saveSettings({ token });
     set({ token });
-  },
-
-  setUIMode: async (uiMode: UIMode) => {
-    await saveSettings({ uiMode });
-    set({ uiMode });
   },
 
   setAutoSync: async (autoSync: AutoSyncConfig) => {

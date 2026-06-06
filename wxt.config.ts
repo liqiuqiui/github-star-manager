@@ -6,7 +6,7 @@ export default defineConfig({
   entrypointsDir: "../entrypoints",
   modules: ["@wxt-dev/module-react"],
   manifest: {
-    permissions: ["storage", "alarms"],
+    permissions: ["storage", "alarms", "sidePanel"],
   },
   webExt: {
     disabled: true,
