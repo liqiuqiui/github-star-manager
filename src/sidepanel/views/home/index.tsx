@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { isEmpty, uniq, sortBy, orderBy } from "lodash-es";
 import { Settings as SettingsIcon, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -15,14 +16,14 @@ import {
 } from "@/components/ui/select";
 import { useStarStore } from "@/stores/starStore";
 import { useSettingsStore } from "@/stores/settingsStore";
-import { SearchBar } from "@/components/SearchBar";
-import { StarList } from "@/components/StarList";
-import { TagPanel } from "@/components/TagPanel";
-import { ListPanel } from "@/components/ListPanel";
-import Settings from "@/sidepanel-views/settings";
+import { SearchBar } from "./components/SearchBar";
+import { StarList } from "./components/StarList";
+import { TagPanel } from "./components/TagPanel";
+import { ListPanel } from "./components/ListPanel";
 
-export default function App() {
+export default function Home() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const {
     repos,
     starLists,
@@ -40,7 +41,6 @@ export default function App() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedList, setSelectedList] = useState<string | null>(null);
   const [selectedRepos, setSelectedRepos] = useState<Set<string>>(new Set());
-  const [showSettings, setShowSettings] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmUnstar, setConfirmUnstar] = useState(false);
   const [sortField, setSortField] = useState<"starredAt" | "stargazerCount" | "pushedAt" | "name">(
@@ -173,10 +173,6 @@ export default function App() {
     await syncFromGitHub(token);
   }, [token, syncFromGitHub]);
 
-  if (showSettings) {
-    return <Settings onBack={() => setShowSettings(false)} />;
-  }
-
   return (
     <div className="app flex flex-col h-full w-full overflow-hidden relative">
       {/* 全局同步遮罩 */}
@@ -195,7 +191,7 @@ export default function App() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setShowSettings(true)}
+            onClick={() => navigate("/settings")}
             className="h-8 w-8"
           >
             <SettingsIcon size={16} />
@@ -207,7 +203,7 @@ export default function App() {
         {!token ? (
           <div className="app__empty flex-1 flex flex-col items-center justify-center">
             <p className="text-sm text-muted-foreground mb-4">{t("app.noToken")}</p>
-            <Button onClick={() => setShowSettings(true)}>{t("app.goToSettings")}</Button>
+            <Button onClick={() => navigate("/settings")}>{t("app.goToSettings")}</Button>
           </div>
         ) : isLoading ? (
           <div className="app__loading flex-1 flex items-center justify-center text-sm text-muted-foreground">

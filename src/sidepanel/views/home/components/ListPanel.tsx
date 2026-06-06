@@ -1,8 +1,8 @@
 import { isEmpty } from "lodash-es";
 import { useTranslation } from "react-i18next";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import type { StarList } from "../types";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import type { StarList } from "@/types";
 
 interface ListPanelProps {
   starLists: StarList[];

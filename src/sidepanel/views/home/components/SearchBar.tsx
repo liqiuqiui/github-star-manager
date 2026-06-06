@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { Search, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;

@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import { isEmpty, groupBy, sortBy, flatten } from "lodash-es";
 import { useTranslation } from "react-i18next";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import type { RepoTagMap } from "../types";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import type { RepoTagMap } from "@/types";
 
 interface TagPanelProps {
   repoTags: RepoTagMap;

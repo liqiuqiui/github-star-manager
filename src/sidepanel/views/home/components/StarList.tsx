@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { isEmpty } from "lodash-es";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslation } from "react-i18next";
-import type { Repo } from "../types";
+import type { Repo } from "@/types";
 import { StarCard } from "./StarCard";
 
 interface StarListProps {

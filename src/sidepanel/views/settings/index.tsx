@@ -2,31 +2,29 @@ import { useState, useEffect } from "react";
 import { defaultTo } from "lodash-es";
 import { ArrowLeft, Sun, Moon, Monitor } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type SupportedLanguage } from "../../constants";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Checkbox } from "../../components/ui/checkbox";
+import { useNavigate } from "react-router-dom";
+import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type SupportedLanguage } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
-import type { AutoSyncConfig } from "../../types";
-import { useSettingsStore } from "../../stores/settingsStore";
-import { useTheme } from "../../hooks/useTheme";
-import { validateToken } from "../../services/auth";
-import type { GitHubUser } from "../../types";
-import { SyncFrequency } from "../../enums";
+} from "@/components/ui/select";
+import type { AutoSyncConfig } from "@/types";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { useTheme } from "@/hooks/useTheme";
+import { validateToken } from "@/services/auth";
+import type { GitHubUser } from "@/types";
+import { SyncFrequency } from "@/enums";
 
-interface SettingsProps {
-  onBack: () => void;
-}
-
-export default function Settings({ onBack }: SettingsProps) {
+export default function Settings() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { token, autoSync, language, setToken, setAutoSync, setLanguage, loadSettings } =
     useSettingsStore();
 
@@ -112,7 +110,7 @@ export default function Settings({ onBack }: SettingsProps) {
   return (
     <div className="flex flex-col h-full min-h-[480px] min-w-[300px] w-full">
       <header className="flex items-center gap-2 px-4 py-3 border-b border-border bg-card">
-        <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
+        <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="h-8 w-8">
           <ArrowLeft size={16} />
         </Button>
         <h2 className="text-sm font-semibold text-foreground">{t("settings.title")}</h2>

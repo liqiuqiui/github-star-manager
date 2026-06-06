@@ -1,10 +1,10 @@
 import { isEmpty } from "lodash-es";
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { cn } from "../lib/utils";
-import { Checkbox } from "./ui/checkbox";
-import { Badge } from "./ui/badge";
-import type { Repo } from "../types";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import type { Repo } from "@/types";
 
 interface StarCardProps {
   repo: Repo;
