@@ -26,6 +26,7 @@
     "selected": "已选",
     "selectedUnit": "个",
     "batchUnstar": "批量取消 Star",
+    "batchUnstarConfirm": "确定要取消 {{count}} 个仓库的 Star 吗？",
     "selectAll": "全选",
     "repoCount": "个仓库",
     "lastSync": "上次同步："

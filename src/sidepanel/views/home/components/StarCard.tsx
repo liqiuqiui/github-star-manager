@@ -2,7 +2,6 @@ import { isEmpty } from "lodash-es";
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import type { Repo } from "@/types";
 
@@ -16,25 +15,22 @@ export function StarCard({ repo, selected, onSelect }: StarCardProps) {
   const { t } = useTranslation();
   return (
     <div
+      onClick={() => onSelect(repo.nameWithOwner, !selected)}
       className={cn(
-        "star-card border rounded-lg px-3 py-2.5 transition-colors",
+        "star-card border rounded-lg px-3 py-2.5 transition-colors cursor-pointer",
         selected
           ? "star-card--selected border-primary bg-muted"
           : "border-border hover:border-muted-foreground/50 bg-card",
       )}
     >
       <div className="flex items-start gap-2.5">
-        <Checkbox
-          checked={selected}
-          onCheckedChange={(checked) => onSelect(repo.nameWithOwner, checked as boolean)}
-          className="star-card__checkbox mt-1"
-        />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <a
               href={repo.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="star-card__name text-sm font-medium text-foreground hover:text-muted-foreground truncate"
             >
               {repo.nameWithOwner}

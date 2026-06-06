@@ -1,65 +1,134 @@
 import { defaultTo } from "lodash-es";
 import { dayjs } from "../src/lib/date";
 import type { AutoSyncConfig } from "../src/types";
+import { settingsItem } from "../src/services/storage";
 
 export default defineBackground(() => {
-  console.log("GitHub Star Manager background started");
-
-  const STORAGE_KEY = "github-star-manager-settings";
   const CHECK_ALARM_NAME = "auto-sync-check";
+  const GITHUB_PATTERN = /^https?:\/\/(www\.)?github\.com/;
 
   // Chrome-specific sidePanel API
   if (import.meta.env.CHROME) {
     browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
   }
 
+  // 图标状态管理
+  function isGitHubUrl(url: string | undefined): boolean {
+    return !!url && GITHUB_PATTERN.test(url);
+  }
+
+  // 生成灰色图标
+  async function getGrayIcon(size: number): Promise<ImageData> {
+    const canvas = new OffscreenCanvas(size, size);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Failed to get canvas context");
+
+    const iconUrl = browser.runtime.getURL(`/icon/${size}.png` as any);
+    const response = await fetch(iconUrl);
+    const blob = await response.blob();
+    const bitmap = await createImageBitmap(blob);
+
+    ctx.drawImage(bitmap, 0, 0, size, size);
+    const imageData = ctx.getImageData(0, 0, size, size);
+    const data = imageData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      data[i] = gray;
+      data[i + 1] = gray;
+      data[i + 2] = gray;
+      data[i + 3] = data[i + 3] * 0.5;
+    }
+
+    return imageData;
+  }
+
+  async function updateIconState(tabId: number, url?: string) {
+    const isGitHub = isGitHubUrl(url);
+
+    try {
+      if (isGitHub) {
+        await browser.action.setIcon({
+          tabId,
+          path: {
+            16: "/icon/16.png",
+            32: "/icon/32.png",
+            48: "/icon/48.png",
+            96: "/icon/96.png",
+            128: "/icon/128.png",
+          },
+        });
+      } else {
+        const sizes = [16, 32, 48, 96, 128];
+        const imageDataMap: Record<number, ImageData> = {};
+
+        for (const size of sizes) {
+          imageDataMap[size] = await getGrayIcon(size);
+        }
+
+        await browser.action.setIcon({
+          tabId,
+          imageData: imageDataMap,
+        });
+      }
+    } catch {
+      // 忽略图标设置错误
+    }
+  }
+
+  // 监听标签页切换
+  browser.tabs.onActivated.addListener(async (activeInfo) => {
+    try {
+      const tab = await browser.tabs.get(activeInfo.tabId);
+      await updateIconState(activeInfo.tabId, tab.url);
+    } catch {
+      // 忽略无法访问的标签页
+    }
+  });
+
+  // 监听标签页 URL 变化
+  browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    if (changeInfo.url || changeInfo.status === "complete") {
+      await updateIconState(tabId, tab.url);
+    }
+  });
+
+  // 初始化当前标签页图标状态
+  browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+    if (tabs[0]?.id) {
+      updateIconState(tabs[0].id, tabs[0].url);
+    }
+  });
+
   // 使用 webRequest API 拦截 GitHub Star API 请求
   if (browser.webRequest) {
     browser.webRequest.onCompleted.addListener(
       (details) => {
-        // 检测 Star API 请求：PUT /user/starred/{owner}/{repo} 或 DELETE /user/starred/{owner}/{repo}
         const starApiPattern = /\/user\/starred\/([^/]+\/[^/]+)/;
         const match = details.url.match(starApiPattern);
 
         if (match && (details.method === "PUT" || details.method === "DELETE")) {
-          const repoName = match[1];
-          const action = details.method === "PUT" ? "star" : "unstar";
-
-          console.log(`Star change detected via webRequest: ${action} ${repoName}`);
-
-          // 通知 sidepanel 触发同步
           triggerSync();
         }
       },
       { urls: ["https://api.github.com/*"] },
     );
-
-    console.log("webRequest listener registered for GitHub Star API");
   }
 
   // 初始化自动同步
-  browser.storage.sync.get(STORAGE_KEY).then((result) => {
-    const settings = result[STORAGE_KEY] as { autoSync?: AutoSyncConfig } | undefined;
-    if (settings?.autoSync?.enabled) {
+  settingsItem.getValue().then((settings) => {
+    if (settings.autoSync?.enabled) {
       setupAutoSyncCheck();
     }
   });
 
   // 监听设置变更
-  browser.storage.onChanged.addListener((changes) => {
-    if (changes[STORAGE_KEY]) {
-      const newSettings = changes[STORAGE_KEY].newValue as
-        | { autoSync?: AutoSyncConfig }
-        | undefined;
-
-      // 自动同步配置更新
-      if (newSettings?.autoSync) {
-        if (newSettings.autoSync.enabled) {
-          setupAutoSyncCheck();
-        } else {
-          browser.alarms.clear(CHECK_ALARM_NAME);
-          console.log("Auto-sync disabled");
-        }
+  settingsItem.watch((newSettings) => {
+    if (newSettings.autoSync) {
+      if (newSettings.autoSync.enabled) {
+        setupAutoSyncCheck();
+      } else {
+        browser.alarms.clear(CHECK_ALARM_NAME);
       }
     }
   });
@@ -69,7 +138,6 @@ export default defineBackground(() => {
     browser.alarms.create(CHECK_ALARM_NAME, {
       periodInMinutes: 1,
     });
-    console.log("Auto-sync check alarm set (every 1 minute)");
   }
 
   // 检查是否应该同步
@@ -77,15 +145,13 @@ export default defineBackground(() => {
     const now = dayjs();
     const hour = now.hour();
     const minute = now.minute();
-    const dayOfWeek = now.day(); // 0=周日
+    const dayOfWeek = now.day();
     const dayOfMonth = now.date();
 
-    // 检查时间是否匹配
     if (hour !== config.hour || minute !== config.minute) {
       return false;
     }
 
-    // 根据频率检查
     switch (config.frequency) {
       case "daily":
         return true;
@@ -104,12 +170,8 @@ export default defineBackground(() => {
   // 监听 alarm 事件
   browser.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === CHECK_ALARM_NAME) {
-      // 读取配置并检查是否需要同步
-      browser.storage.sync.get(STORAGE_KEY).then((result) => {
-        const settings = result[STORAGE_KEY] as { autoSync?: AutoSyncConfig } | undefined;
-
-        if (settings?.autoSync?.enabled && shouldSync(settings.autoSync)) {
-          console.log("Auto-sync triggered by schedule");
+      settingsItem.getValue().then((settings) => {
+        if (settings.autoSync?.enabled && shouldSync(settings.autoSync)) {
           triggerSync();
         }
       });
@@ -131,7 +193,7 @@ export default defineBackground(() => {
           .open({ windowId: message.windowId || undefined })
           .then(() => sendResponse({ success: true }))
           .catch((err: Error) => sendResponse({ success: false, error: err.message }));
-        return true; // 异步响应
+        return true;
       }
     }
 

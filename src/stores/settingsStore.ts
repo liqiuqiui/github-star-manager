@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import type { AutoSyncConfig } from "../types";
-import { getSettings, saveSettings } from "../services/auth";
+import { settingsItem } from "../services/storage";
 import i18n from "../i18n";
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, type SupportedLanguage } from "../constants";
 import { SyncFrequency } from "../enums";
 
+// Zustand Store
 interface SettingsState {
   token: string;
   autoSync: AutoSyncConfig;
@@ -34,7 +35,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
 
   loadSettings: async () => {
     set({ isLoading: true });
-    const settings = await getSettings();
+    const settings = await settingsItem.getValue();
     // 优先使用持久化的语言，其次使用浏览器检测的语言，最后使用默认语言
     const detectedLng = (
       settings.language ||
@@ -52,18 +53,21 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   },
 
   setToken: async (token: string) => {
-    await saveSettings({ token });
+    const current = await settingsItem.getValue();
+    await settingsItem.setValue({ ...current, token });
     set({ token });
   },
 
   setAutoSync: async (autoSync: AutoSyncConfig) => {
-    await saveSettings({ autoSync });
+    const current = await settingsItem.getValue();
+    await settingsItem.setValue({ ...current, autoSync });
     set({ autoSync });
   },
 
   setLanguage: async (language: SupportedLanguage) => {
     try {
-      await saveSettings({ language });
+      const current = await settingsItem.getValue();
+      await settingsItem.setValue({ ...current, language });
       i18n.changeLanguage(language);
       set({ language });
     } catch (error) {

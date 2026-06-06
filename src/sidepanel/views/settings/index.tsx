@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/select";
 import type { AutoSyncConfig } from "@/types";
 import { useSettingsStore } from "@/stores/settingsStore";
-import { useTheme } from "@/hooks/useTheme";
-import { validateToken } from "@/services/auth";
+import { useThemeStore } from "@/hooks/useTheme";
+import { verifyToken } from "@/services/github-api";
 import type { GitHubUser } from "@/types";
 import { SyncFrequency } from "@/enums";
 
@@ -43,7 +43,7 @@ export default function Settings() {
     weekly: t("settings.frequencyWeekly"),
     monthly: t("settings.frequencyMonthly"),
   };
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useThemeStore();
   const [tokenInput, setTokenInput] = useState(token);
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -60,7 +60,7 @@ export default function Settings() {
   useEffect(() => {
     setTokenInput(token);
     if (token) {
-      validateToken(token)
+      verifyToken(token)
         .then(setUser)
         .catch(() => setUser(null));
     }
@@ -80,7 +80,7 @@ export default function Settings() {
     setError(null);
 
     try {
-      const userData = await validateToken(tokenInput.trim());
+      const userData = await verifyToken(tokenInput.trim());
       setUser(userData);
       await setToken(tokenInput.trim());
       setSaved(true);

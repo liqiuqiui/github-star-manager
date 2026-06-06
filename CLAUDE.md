@@ -71,6 +71,14 @@ GitHub API → github-api.ts → starStore (Zustand) ↔ cache.ts (IndexedDB)
 
 ## 重要约定
 
+### 国际化
+
+所有用户可见文案（按钮文字、提示信息、标签等）禁止硬编码，必须通过 `useTranslation` 使用国际化 key。
+
+修改文案时需同步维护 `src/i18n/locales/` 下的所有语言文件：
+
+任何文案变更都需同步维护语言文件，无引用的 key 应及时清理。
+
 ### 路径别名
 
 `@/` 映射到 `./src/`，但在 WXT 中需要使用相对路径（entrypoints 中用 `../../src/`）。

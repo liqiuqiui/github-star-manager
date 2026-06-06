@@ -26,6 +26,7 @@
     "selected": "Selected",
     "selectedUnit": " ",
     "batchUnstar": "Batch Unstar",
+    "batchUnstarConfirm": "Are you sure you want to unstar {{count}} repos?",
     "selectAll": "Select All",
     "repoCount": "repos",
     "lastSync": "Last synced: "

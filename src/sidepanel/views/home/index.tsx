@@ -14,6 +14,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useStarStore } from "@/stores/starStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { SearchBar } from "./components/SearchBar";
@@ -42,7 +53,6 @@ export default function Home() {
   const [selectedList, setSelectedList] = useState<string | null>(null);
   const [selectedRepos, setSelectedRepos] = useState<Set<string>>(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
-  const [confirmUnstar, setConfirmUnstar] = useState(false);
   const [sortField, setSortField] = useState<"starredAt" | "stargazerCount" | "pushedAt" | "name">(
     "starredAt",
   );
@@ -274,41 +284,35 @@ export default function Home() {
                       {t("app.selected")} <Badge variant="secondary">{selectedRepos.size}</Badge>{" "}
                       {t("app.selectedUnit")}
                     </span>
-                    {!confirmUnstar ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setConfirmUnstar(true)}
-                        disabled={isProcessing}
-                        className="text-destructive border-destructive/20 hover:bg-destructive/10 h-7 text-xs"
-                      >
-                        {t("app.batchUnstar")}
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => {
-                            handleBatchUnstar();
-                            setConfirmUnstar(false);
-                          }}
-                          disabled={isProcessing}
-                          className="h-7 text-xs"
-                        >
-                          {isProcessing ? t("common.processing") : t("common.confirm")}
-                        </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setConfirmUnstar(false)}
                           disabled={isProcessing}
-                          className="h-7 text-xs"
+                          className="text-destructive border-destructive/20 hover:bg-destructive/10 h-7 text-xs"
                         >
-                          {t("common.cancel")}
+                          {t("app.batchUnstar")}
                         </Button>
-                      </>
-                    )}
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{t("app.batchUnstar")}</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {t("app.batchUnstarConfirm", { count: selectedRepos.size })}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleBatchUnstar}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {isProcessing ? t("common.processing") : t("common.confirm")}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button
                       variant="ghost"
                       size="sm"
