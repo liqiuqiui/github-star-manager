@@ -13,6 +13,30 @@ export default defineBackground(() => {
     browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
   }
 
+  // 使用 webRequest API 拦截 GitHub Star API 请求
+  if (browser.webRequest) {
+    browser.webRequest.onCompleted.addListener(
+      (details) => {
+        // 检测 Star API 请求：PUT /user/starred/{owner}/{repo} 或 DELETE /user/starred/{owner}/{repo}
+        const starApiPattern = /\/user\/starred\/([^/]+\/[^/]+)/;
+        const match = details.url.match(starApiPattern);
+
+        if (match && (details.method === "PUT" || details.method === "DELETE")) {
+          const repoName = match[1];
+          const action = details.method === "PUT" ? "star" : "unstar";
+
+          console.log(`Star change detected via webRequest: ${action} ${repoName}`);
+
+          // 通知 sidepanel 触发同步
+          triggerSync();
+        }
+      },
+      { urls: ["https://api.github.com/*"] },
+    );
+
+    console.log("webRequest listener registered for GitHub Star API");
+  }
+
   // 初始化自动同步
   browser.storage.sync.get(STORAGE_KEY).then((result) => {
     const settings = result[STORAGE_KEY] as { autoSync?: AutoSyncConfig } | undefined;
@@ -99,14 +123,8 @@ export default defineBackground(() => {
     });
   }
 
-  // 监听来自 content script 和 sidepanel 的消息
+  // 监听来自 sidepanel 的消息
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "GITHUB_STAR_CHANGED") {
-      console.log("GitHub star change detected:", message.action);
-      triggerSync();
-      sendResponse({ success: true });
-    }
-
     if (message.type === "OPEN_SIDEPANEL") {
       if (import.meta.env.CHROME) {
         browser.sidePanel
