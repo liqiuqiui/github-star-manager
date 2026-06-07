@@ -2,7 +2,11 @@ import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/en";
 import i18n from "../i18n";
-import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, type SupportedLanguage } from "../constants";
+import {
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
+} from "../../common/constants";
 
 // 根据 i18n 语言设置 dayjs locale
 const updateDayjsLocale = () => {

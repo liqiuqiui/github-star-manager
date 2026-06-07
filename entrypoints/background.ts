@@ -2,10 +2,15 @@ import { defaultTo } from "lodash-es";
 import { dayjs } from "../src/lib/date";
 import type { AutoSyncConfig } from "../src/types";
 import { settingsItem } from "../src/services/storage";
+import { BackgroundMessageType, StarAction } from "../common/enums";
 
 export default defineBackground(() => {
   const CHECK_ALARM_NAME = "auto-sync-check";
+  const KEEPALIVE_ALARM_NAME = "keepalive";
   const GITHUB_PATTERN = /^https?:\/\/(www\.)?github\.com/;
+
+  // 保活：防止 Service Worker 休眠导致 webRequest 事件丢失
+  browser.alarms.create(KEEPALIVE_ALARM_NAME, { periodInMinutes: 0.4 });
 
   // Chrome-specific sidePanel API
   if (import.meta.env.CHROME) {
@@ -100,18 +105,45 @@ export default defineBackground(() => {
     }
   });
 
-  // 使用 webRequest API 拦截 GitHub Star API 请求
+  // 防抖定时器
+  let syncDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  const SYNC_DEBOUNCE_MS = 5000; // 5秒防抖
+
+  // 使用 webRequest API 拦截 GitHub Star/Unstar 请求
   if (browser.webRequest) {
+    // Star: POST https://github.com/{owner}/{repo}/star
+    // Unstar: POST https://github.com/{owner}/{repo}/unstar
+    const starUrlPattern = /https:\/\/github\.com\/([^/]+\/[^/]+)\/(star|unstar)/;
+
     browser.webRequest.onCompleted.addListener(
       (details) => {
-        const starApiPattern = /\/user\/starred\/([^/]+\/[^/]+)/;
-        const match = details.url.match(starApiPattern);
+        const match = details.url.match(starUrlPattern);
 
-        if (match && (details.method === "PUT" || details.method === "DELETE")) {
-          triggerSync();
+        if (match && details.method === "POST") {
+          const repoName = match[1];
+          const actionType = match[2];
+          const action = actionType === "star" ? StarAction.Star : StarAction.Unstar;
+
+          // 通知 sidepanel 做本地增量更新
+          browser.runtime
+            .sendMessage({
+              type: BackgroundMessageType.StarChange,
+              action,
+              repoName,
+            })
+            .catch(() => {});
+
+          // 防抖：延迟触发完整同步标记
+          if (syncDebounceTimer) {
+            clearTimeout(syncDebounceTimer);
+          }
+          syncDebounceTimer = setTimeout(() => {
+            browser.runtime.sendMessage({ type: BackgroundMessageType.MarkDirty }).catch(() => {});
+            syncDebounceTimer = null;
+          }, SYNC_DEBOUNCE_MS);
         }
       },
-      { urls: ["https://api.github.com/*"] },
+      { urls: ["https://github.com/*"] },
     );
   }
 
@@ -180,14 +212,14 @@ export default defineBackground(() => {
 
   // 触发同步
   function triggerSync() {
-    browser.runtime.sendMessage({ type: "TRIGGER_SYNC" }).catch(() => {
+    browser.runtime.sendMessage({ type: BackgroundMessageType.TriggerSync }).catch(() => {
       // sidepanel 可能未打开，忽略错误
     });
   }
 
   // 监听来自 sidepanel 的消息
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "OPEN_SIDEPANEL") {
+    if (message.type === BackgroundMessageType.OpenSidepanel) {
       if (import.meta.env.CHROME) {
         browser.sidePanel
           .open({ windowId: message.windowId || undefined })

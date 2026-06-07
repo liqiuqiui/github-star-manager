@@ -1,4 +1,4 @@
-import { type SyncFrequency } from "../enums";
+import { type SyncFrequency } from "@@/common/enums";
 
 export interface Repo {
   nameWithOwner: string;

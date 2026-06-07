@@ -3,7 +3,7 @@ import { defaultTo } from "lodash-es";
 import { ArrowLeft, Sun, Moon, Monitor } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type SupportedLanguage } from "@/constants";
+import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS, type SupportedLanguage } from "@@/common/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useThemeStore } from "@/hooks/useTheme";
 import { verifyToken } from "@/services/github-api";
 import type { GitHubUser } from "@/types";
-import { SyncFrequency } from "@/enums";
+import { SyncFrequency } from "@@/common/enums";
 
 export default function Settings() {
   const { t } = useTranslation();

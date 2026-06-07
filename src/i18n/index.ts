@@ -4,7 +4,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 
 import zhCN from "./locales/zh-cn.json";
 import en from "./locales/en.json";
-import { DEFAULT_LANGUAGE } from "../constants";
+import { DEFAULT_LANGUAGE } from "../../common/constants";
 
 const resources = {
   "zh-cn": { translation: zhCN },

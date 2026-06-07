@@ -1,8 +1,8 @@
 import { storage } from "wxt/utils/storage";
 import type { AutoSyncConfig } from "../types";
-import type { SupportedLanguage } from "../constants";
-import { DEFAULT_LANGUAGE } from "../constants";
-import { SyncFrequency } from "../enums";
+import type { SupportedLanguage } from "../../common/constants";
+import { DEFAULT_LANGUAGE } from "../../common/constants";
+import { SyncFrequency } from "../../common/enums";
 
 // Settings 数据类型
 export interface SettingsData {

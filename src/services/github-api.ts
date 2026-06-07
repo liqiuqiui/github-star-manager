@@ -201,6 +201,85 @@ export async function unstarRepo(token: string, nameWithOwner: string): Promise<
   });
 }
 
+export async function fetchRepoInfo(token: string, nameWithOwner: string): Promise<Repo | null> {
+  const [owner, name] = nameWithOwner.split("/");
+
+  try {
+    const data: {
+      repository: {
+        nameWithOwner: string;
+        name: string;
+        description: string;
+        url: string;
+        homepageUrl: string;
+        stargazerCount: number;
+        primaryLanguage: { name: string; color: string } | null;
+        repositoryTopics: { nodes: Array<{ topic: { name: string } }> };
+        isArchived: boolean;
+        isDisabled: boolean;
+        pushedAt: string;
+      } | null;
+    } = await graphqlRequest(
+      token,
+      `query ($owner: String!, $name: String!) {
+        repository(owner: $owner, name: $name) {
+          nameWithOwner
+          name
+          description
+          url
+          homepageUrl
+          stargazerCount
+          primaryLanguage {
+            name
+            color
+          }
+          repositoryTopics(first: 10) {
+            nodes {
+              topic {
+                name
+              }
+            }
+          }
+          isArchived
+          isDisabled
+          pushedAt
+        }
+      }`,
+      { owner, name },
+    );
+
+    const repo = data.repository;
+    if (!repo) return null;
+
+    return {
+      nameWithOwner: repo.nameWithOwner,
+      name: repo.name,
+      owner,
+      description: repo.description || "",
+      url: repo.url,
+      homepageUrl: repo.homepageUrl || "",
+      stargazerCount: repo.stargazerCount,
+      primaryLanguage: repo.primaryLanguage,
+      topics: repo.repositoryTopics.nodes.map((t) => t.topic.name),
+      isArchived: repo.isArchived,
+      isDisabled: repo.isDisabled,
+      pushedAt: repo.pushedAt,
+      starredAt: new Date().toISOString(),
+    };
+  } catch (err) {
+    // 区分不同错误类型
+    if (err instanceof Error) {
+      // GraphQL 错误（仓库不存在、无权限等）
+      if (err.message.includes("Could not resolve")) {
+        return null;
+      }
+      // 网络错误或 API 限流 - 向上抛出，让调用方决定是否重试
+      throw err;
+    }
+    return null;
+  }
+}
+
 export async function starRepo(token: string, nameWithOwner: string): Promise<void> {
   const [owner, name] = nameWithOwner.split("/");
   await fetch(`https://api.github.com/user/starred/${owner}/${name}`, {

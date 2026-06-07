@@ -2,8 +2,12 @@ import { create } from "zustand";
 import type { AutoSyncConfig } from "../types";
 import { settingsItem } from "../services/storage";
 import i18n from "../i18n";
-import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, type SupportedLanguage } from "../constants";
-import { SyncFrequency } from "../enums";
+import {
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
+} from "../../common/constants";
+import { SyncFrequency } from "../../common/enums";
 
 // Zustand Store
 interface SettingsState {

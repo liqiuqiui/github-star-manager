@@ -7,7 +7,7 @@ export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   manifest: {
     permissions: ["storage", "alarms", "sidePanel", "webRequest"],
-    host_permissions: ["https://api.github.com/*"],
+    host_permissions: ["*://*.github.com/*"],
     action: {
       default_icon: {
         16: "icon/16.png",

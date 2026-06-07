@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useStarStore } from "@/stores/starStore";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { useMessageListener } from "@/sidepanel/hooks/useMessageListener";
 import { SearchBar } from "./components/SearchBar";
 import { StarList } from "./components/StarList";
 import { TagPanel } from "./components/TagPanel";
@@ -48,6 +49,9 @@ export default function Home() {
   } = useStarStore();
   const { token, loadSettings } = useSettingsStore();
 
+  // 监听来自 background 的消息
+  useMessageListener(token, isSyncing, syncFromGitHub);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedList, setSelectedList] = useState<string | null>(null);
@@ -64,20 +68,6 @@ export default function Home() {
       loadFromCache();
     });
   }, [loadSettings, loadFromCache]);
-
-  // 监听来自 background 的同步触发消息
-  useEffect(() => {
-    const handleMessage = (message: { type: string }) => {
-      if (message.type === "TRIGGER_SYNC" && token && !isSyncing) {
-        syncFromGitHub(token);
-      }
-    };
-
-    browser.runtime.onMessage.addListener(handleMessage);
-    return () => {
-      browser.runtime.onMessage.removeListener(handleMessage);
-    };
-  }, [token, isSyncing, syncFromGitHub]);
 
   const languages = useMemo(() => {
     return sortBy(uniq(repos.filter((r) => r.primaryLanguage).map((r) => r.primaryLanguage!.name)));
